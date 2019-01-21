@@ -1,5 +1,8 @@
 ## Created by Weboneo
 
+# Project specs
+datas/tasks/*.txt
+
 # Visual Studio
 .vs
 .vscode

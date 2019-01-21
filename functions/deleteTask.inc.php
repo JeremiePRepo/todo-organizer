@@ -15,13 +15,6 @@ function deleteTask(){
 
             header('Location: /');
 
-            // TODO : envoyer en variable de session
-            return $fileToDelete . ' supprimé.';
-
-        } else {
-
-            return 'Le fichier ' . $fileToDelete . ' n\'existe pas.';
-
         }
     }
 

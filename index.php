@@ -22,14 +22,20 @@ include 'functions/countTasks.inc.php';
 // Fonction pour supprimer une tâche
 include 'functions/deleteTask.inc.php';
 
+// Fonction pour traiter le formulaire de connexion
+include 'functions/processConnectionForm.inc.php';
+
 
 
 /*----------------------------------------*\
     Functions call
 \*----------------------------------------*/
 
+// On traite le formulaire de connection
+processConnectionForm();
+
 // On vérifie qu'une têche n'est pas en cours de suppression
-$alertMessage = deleteTask();
+deleteTask();
 
 // On traite l'envoie du formulaire
 $content = processAddTaskForm();
