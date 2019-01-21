@@ -14,7 +14,7 @@ function processAddTaskForm () {
         }
 
         // On crée un nouveau fichier task
-        file_put_contents(TASKS_FOLDER . date('Y-m-d') . '-' . $i . '.txt', $_POST['title'] . "\n\r" . $_POST['comments']);
+        file_put_contents(TASKS_FOLDER . date('Y-m-d') . '-' . $i . '.txt', $_POST['title'] . "\n\rfalse\n\r" . $_POST['comments']);
 
     };
 

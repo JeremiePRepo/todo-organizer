@@ -19,17 +19,23 @@ include 'functions/processAddTaskForm.inc.php';
 // Fonction pour compter les tâches
 include 'functions/countTasks.inc.php';
 
+// Fonction pour supprimer une tâche
+include 'functions/deleteTask.inc.php';
+
 
 
 /*----------------------------------------*\
     Functions call
 \*----------------------------------------*/
 
-// On traite la liste des Tâches
-$content = displayTasksList();
+// On vérifie qu'une têche n'est pas en cours de suppression
+$alertMessage = deleteTask();
 
 // On traite l'envoie du formulaire
-$content .= processAddTaskForm();
+$content = processAddTaskForm();
+
+// On traite la liste des Tâches
+$content .= displayTasksList();
 
 // On affiche la page
-echo constructPage($content);
+echo constructPage($content, $alertMessage);

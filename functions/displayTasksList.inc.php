@@ -35,7 +35,6 @@ function displayTasksList(){
                 $output .= 'Date de création de la Tâche : ' . $date . '<br>';
                 $output .= 'Titre : ' . $title . '<br>';
                 $output .= 'Checked : ' . $checked . '<br>';
-                $output .= 'Date d\'ajout : ' . $dateAdded . '<br>';
 
                 // Le reste du fichier concerne les commentaires
                 while (($comment = fgets($taskFile)) !== false) {
@@ -43,6 +42,11 @@ function displayTasksList(){
                 }
 
                 fclose($taskFile);
+
+
+                // Ajout du bouton de supression de la tâche
+                $output .= '<form><button name="delete" value="' . $fileName . '">Supprimer</button></form>';
+
 
                 $output .= '<br>';
 
