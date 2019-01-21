@@ -3,7 +3,7 @@
  | Datas
 \*/
 define ('TASKS_FOLDER', 'datas/tasks/');
-define ('TASKS_FILES_NAMING_RULES', '/[0-9]+\.txt/');
+define ('TASKS_FILES_NAMING_RULES', '/^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{1}\.txt$/');
 
 /*\
  | HTML Parts

@@ -18,11 +18,10 @@ function displayTasksList(){
     foreach ($tasksList as $key => $fileName) {
 
         // On vérifie si le fichier est bien nommé
-        if (preg_match(TASKS_FILES_NAMING_RULES, $fileName) > 0) {
+        if (preg_match(TASKS_FILES_NAMING_RULES, $fileName, $matches)) {
 
-            // On extrait l'ID de la tâche dans le nom du fichier
-            preg_match_all('/\d+/', $fileName, $taskId);
-            $output .= 'ID de la Tâche : ' . $taskId[0][0] . '<br>';
+            // On extrait la date de la tâche à partir du nom du fichier
+            $date = preg_replace('/-[0-9]{1}.txt$/', '', $matches[0]);
 
             // On affiche le titre de la tâche
             $taskFile = fopen(TASKS_FOLDER.$fileName, "r");
@@ -33,6 +32,7 @@ function displayTasksList(){
                 $checked = fgets($taskFile);
                 $dateAdded = fgets($taskFile);
 
+                $output .= 'Date de création de la Tâche : ' . $date . '<br>';
                 $output .= 'Titre : ' . $title . '<br>';
                 $output .= 'Checked : ' . $checked . '<br>';
                 $output .= 'Date d\'ajout : ' . $dateAdded . '<br>';
