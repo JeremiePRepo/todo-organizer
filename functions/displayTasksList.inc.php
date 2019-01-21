@@ -1,6 +1,15 @@
 <?php
 function displayTasksList(){
+
+    /*\
+     | Variables declaration
+    \*/
+
     $output = '';
+
+    /*\
+     | Processing
+    \*/
 
     // On scan le dossier des tâches
     $tasksList = array_diff(scandir(TASKS_FOLDER), array('..', '.'));
@@ -19,10 +28,6 @@ function displayTasksList(){
             $taskFile = fopen(TASKS_FOLDER.$fileName, "r");
 
             if ($taskFile) {
-                // while (($line = fgets($taskFile)) !== false) {
-                //     // process the line read.
-                //     $output .= 'Titre : ' . $line . '<br><br>';
-                // }
 
                 $title = fgets($taskFile);
                 $checked = fgets($taskFile);

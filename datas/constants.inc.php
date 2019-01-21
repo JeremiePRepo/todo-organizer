@@ -2,7 +2,7 @@
 /*\
  | Datas
 \*/
-define ('TASKS_FOLDER', '../datas/tasks/');
+define ('TASKS_FOLDER', 'datas/tasks/');
 define ('TASKS_FILES_NAMING_RULES', '/[0-9]+\.txt/');
 
 /*\
@@ -14,7 +14,7 @@ define ('BODY', '</head><body>');
 define ('FOOTER', '</body></html>');
 
 define ('ADD_TASK_FORM', '
-<form class="form-horizontal" action="pages/formProcessing.php" method="post">
+<form class="form-horizontal" method="post">
 <fieldset>
 
 <!-- Form Name -->
