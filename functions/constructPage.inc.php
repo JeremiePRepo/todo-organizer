@@ -5,6 +5,7 @@ function constructPage($content){
                 BODY .
                 '<h1>' . TITLE . '</h1>' .
                 $content .
+                ADD_TASK_FORM .
                 FOOTER;
     return $output;
 }

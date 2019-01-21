@@ -7,7 +7,7 @@
 include 'datas/constants.inc.php';
 include 'functions/constructPage.inc.php';
 include 'functions/displayTasksList.inc.php';
-include 'functions/addTaskForm.inc.php';
+include 'functions/countTasks.inc.php';
 
 
 
