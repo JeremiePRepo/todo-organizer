@@ -13,6 +13,12 @@ function processAddTaskForm () {
             $i++;
         }
 
+        // Pour éviter un message d'erreur
+        if( !isset($_POST['categorie-1']) ){ $_POST['categorie-1'] = null; }
+        if( !isset($_POST['categorie-2']) ){ $_POST['categorie-2'] = null; }
+        if( !isset($_POST['categorie-3']) ){ $_POST['categorie-3'] = null; }
+        if( !isset($_POST['categorie-4']) ){ $_POST['categorie-4'] = null; }
+
         // On crée un nouveau fichier task
         file_put_contents(TASKS_FOLDER . date('Y-m-d') . "-" . $i . ".txt", $_POST['title'] . "\n\r" . $_POST['categorie-1'] . "\n\r" . $_POST['categorie-2'] . "\n\r" . $_POST['categorie-3'] . "\n\r" . $_POST['categorie-4'] . "\n\r" . $_POST['comments']);
 
