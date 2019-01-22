@@ -6,9 +6,11 @@
 
 define ('TASKS_FOLDER', 'datas/tasks/');
 
-define ('TASKS_FILES_NAMING_RULES', '/^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{1}\.txt$/');
+define ('TASKS_FILES_NAMING_RULES', '/^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]+\.txt$/');
 
 define ('PASSWORD', 'aaaa');
+
+define ('TITLE','TODO Organizer');
 
 
 
@@ -23,14 +25,14 @@ define ('HEAD', '
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-                <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura-dark.css" type="text/css">');
-
-define ('TITLE','TODO Organizer');
+                <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+                <link rel="stylesheet" href="/css/style.css" type="text/css">');
 
 define ('BODY', '</head><body>');
 
 define ('FOOTER', '</body></html>');
 
+// Formulaire d'ajout de tâche
 define ('ADD_TASK_FORM', '
     <form class="form-horizontal" method="post">
     <fieldset>
@@ -66,7 +68,7 @@ define ('ADD_TASK_FORM', '
     <div class="checkbox">
         <label for="categories-3">
         <input type="checkbox" name="categorie-3" id="categories-3" value="1">
-        Loisir
+        Loisirs
         </label>
         </div>
     <div class="checkbox">
@@ -97,6 +99,7 @@ define ('ADD_TASK_FORM', '
     </fieldset>
     </form>');
 
+// Formulaire de connexion
 define('CONNECTION_FORM', '
     <form class="form-horizontal" method="post">
         <fieldset>
@@ -135,6 +138,7 @@ define('CONNECTION_FORM', '
         </fieldset>
     </form>');
 
+// Bouton de déconnexion
 define('DISCONNECTION_BUTTON','
     <form class="form-horizontal">
         <!-- Button -->

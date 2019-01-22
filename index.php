@@ -46,10 +46,10 @@ processConnectionForm();
 deleteTask();
 
 // On traite l'envoie du formulaire
-$content = processAddTaskForm();
+processAddTaskForm();
 
 // On traite la liste des Tâches
-$content .= displayTasksList();
+$content = displayTasksList();
 
 // On affiche la page
 echo constructPage($content);

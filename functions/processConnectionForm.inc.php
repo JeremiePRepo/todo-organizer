@@ -16,9 +16,7 @@ function processConnectionForm(){
                 if ($_POST['remember']) {
                     
                     setcookie('REGISTERED_USER', true, time() + (86400 * 30));
-
                 }
-
             }
         }
     }
