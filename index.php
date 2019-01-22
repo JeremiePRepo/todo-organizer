@@ -25,11 +25,19 @@ include 'functions/deleteTask.inc.php';
 // Fonction pour traiter le formulaire de connexion
 include 'functions/processConnectionForm.inc.php';
 
+// Fonction pour traiter le bouton de déconnexion
+include 'functions/disconnect.inc.php';
+
 
 
 /*----------------------------------------*\
     Functions call
 \*----------------------------------------*/
+
+session_start();
+
+// On vérifie que l'utilisateur ne se soit pas déconnecté
+disconnect();
 
 // On traite le formulaire de connection
 processConnectionForm();
@@ -44,4 +52,4 @@ $content = processAddTaskForm();
 $content .= displayTasksList();
 
 // On affiche la page
-echo constructPage($content, $alertMessage);
+echo constructPage($content);

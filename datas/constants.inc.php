@@ -1,12 +1,14 @@
 <?php
 
 /*\
- | Datas
+ | Params
 \*/
 
 define ('TASKS_FOLDER', 'datas/tasks/');
 
 define ('TASKS_FILES_NAMING_RULES', '/^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{1}\.txt$/');
+
+define ('PASSWORD', 'aaaa');
 
 
 
@@ -96,11 +98,11 @@ define ('ADD_TASK_FORM', '
     </form>');
 
 define('CONNECTION_FORM', '
-    <form class="form-horizontal">
+    <form class="form-horizontal" method="post">
         <fieldset>
 
         <!-- Form Name -->
-        <legend>Form Name</legend>
+        <legend>Connexion</legend>
 
         <!-- Password input-->
         <div class="form-group">
@@ -131,4 +133,15 @@ define('CONNECTION_FORM', '
         </div>
 
         </fieldset>
+    </form>');
+
+define('DISCONNECTION_BUTTON','
+    <form class="form-horizontal">
+        <!-- Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="deconnection"></label>
+            <div class="col-md-4">
+                <button id="deconnection" name="deconnection" class="btn btn-primary">Déconnexion</button>
+            </div>
+        </div>
     </form>');
