@@ -3,8 +3,6 @@ function constructPage($content){
 
     $output =   HEAD . '<title>' . TITLE . '</title>' . BODY;
 
-
-
     // On teste si l'utilisateur s'est connecté
     if((isset($_SESSION['ACCESS']) AND (($_SESSION['ACCESS'] === true))) OR (isset($_COOKIE['REGISTERED_USER']) AND ($_COOKIE['REGISTERED_USER'] === true))){
 
@@ -18,6 +16,5 @@ function constructPage($content){
 
     }
 
-    
     return $output;
 }
