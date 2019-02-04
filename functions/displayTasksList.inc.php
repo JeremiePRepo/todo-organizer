@@ -38,16 +38,16 @@ function displayTasksList(){
 
             if ($taskFile) {
 
-                $title = fgets($taskFile);
-                $category1 = fgets($taskFile);
-                $category2 = fgets($taskFile);
-                $category3 = fgets($taskFile);
-                $category4 = fgets($taskFile);
+                $title = htmlentities(fgets($taskFile));
+                $category1 = htmlentities(fgets($taskFile));
+                $category2 = htmlentities(fgets($taskFile));
+                $category3 = htmlentities(fgets($taskFile));
+                $category4 = htmlentities(fgets($taskFile));
 
                 $comment = '';
                 // Le reste du fichier concerne les commentaires
                 while (($commentLine = fgets($taskFile)) !== false) {
-                    $comment .= $commentLine;
+                    $comment .= htmlentities($commentLine);
                 }
 
                 fclose($taskFile);
