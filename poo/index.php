@@ -17,9 +17,13 @@ spl_autoload_register(function ($class) {
 session_start();
 
 // A mettre dans le futur routeur
+// $dbConnection = DataBase::connect(); // DataBase
+// $content = TodoListPage::getTodosList($dbConnection); // string
+// TodoListPage::setContent($content);
+
 $dbConnection = DataBase::connect(); // DataBase
-$content = TodoListPage::getTodosList($dbConnection); // string
-TodoListPage::setContent($content);
+$todoList = new TodoList($dbConnection);
+$todoList->setList();
 
 // On affiche la page
 TodoListPage::display();

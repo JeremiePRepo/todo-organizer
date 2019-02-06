@@ -22,7 +22,7 @@ class Task
     ----------------------------------------
     \*/
 
-    private $id; // int
+    private $taskId; // int
     private $content; // string
     private $ponderators; // array
     private $checked; // bool
@@ -35,9 +35,14 @@ class Task
 
     /**
      * __construct
-     * En private car singleton.
      */
-    private function __construct()
+    public function __construct(int $taskId, string $content, array $ponderators, bool $checked)
     {
+        $this->$taskId = $taskId;
+        $this->$content = $content;
+        $this->$ponderators = $ponderators;
+        $this->$checked = $checked;
+
+        return $this;
     }
 }
