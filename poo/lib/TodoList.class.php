@@ -4,7 +4,7 @@
 --------------------------------------------
 TodoList.class.php
 --------------------------------------------
-Représente une liste de tâches. Les tâches 
+Représente une liste de tâches. Les tâches
 sont eux aussi des objets.
 
 new TodoList
@@ -22,7 +22,8 @@ class TodoList
     ----------------------------------------
     \*/
 
-    private $todoList; // array
+    private $todoList = array(); // array
+    private $dbConnection; // DataBase
 
     /*\
     ----------------------------------------
@@ -33,19 +34,23 @@ class TodoList
     /**
      * __construct
      */
-    public function __construct()
+    public function __construct(DataBase $dbConnection)
     {
+        $this->dbConnection = $dbConnection;
+
+        // TODO : Gérer les erreur avec le retour booléen
+        $this->setList();
     }
 
-    public function setList(DataBase $dbConnection): bool
+    /**
+     * setList
+     *
+     * @return void
+     */
+    public function setList() // : bool
     {
-        // WIP //////////////////////////////////////////////////////////////////
-
-        // Initialisation de la vaiable de sortie
-        $output = ''; // string
-
         // On récupère les tâches
-        $tasksDatas = $dbConnection->getTasks(); // array
+        $tasksDatas = $this->dbConnection->getTasks(); // array
 
         // On parcours les données des tâches
         foreach ($tasksDatas as $taskDatas) {
@@ -54,23 +59,25 @@ class TodoList
             $taskContent = $taskDatas["content"]; // array
             $taskChecked = ($taskDatas["checked"] === '0') ? false : true; // bool
 
-            $ponderatorsIds = $dbConnection->getTaskPonderators($taskId); // array
+            $ponderatorsIds = $this->dbConnection->getTaskPonderators($taskId); // array
 
             $task = new Task($taskId, $taskContent, $ponderatorsIds, $taskChecked);
 
-            var_dump($task);
-
-            // On récupère les données de chaque pondérateurs
-            // foreach ($ponderatorsIds as $ponderatorId) {
-
-            //     $ponderatorDatas = $dbConnection->getPonderatorById(intval($ponderatorId)); // array
-            //     $ponderatorName = $ponderatorDatas[0]["name"]; // string
-            //     $ponderatorCoeff = intval($ponderatorDatas[0]["coefficient"]); // int
-            // }
+            array_push($this->todoList, $task);
         }
 
-        return $output;
-        // WIP //////////////////////////////////////////////////////////////////
+        // On trie l'array
+        // TODO
+        // $this->todoList = asort($this->todoList);
+    }
 
+    /**
+     * getTodoList
+     *
+     * @return void
+     */
+    public function getTodoList()
+    {
+        return $this->todoList;
     }
 }

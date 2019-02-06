@@ -16,14 +16,11 @@ spl_autoload_register(function ($class) {
 // On appelle les variables de session
 session_start();
 
-// A mettre dans le futur routeur
-// $dbConnection = DataBase::connect(); // DataBase
-// $content = TodoListPage::getTodosList($dbConnection); // string
-// TodoListPage::setContent($content);
+// On instancie une connexion
+$dbConnection = DataBase::connect(); // object DataBase
 
-$dbConnection = DataBase::connect(); // DataBase
-$todoList = new TodoList($dbConnection);
-$todoList->setList();
+// A mettre dans le routeur pour la page Todolist
+$todoList = new TodoList($dbConnection); // object TodoList
 
-// On affiche la page
-TodoListPage::display();
+// On affiche la page (pour la page todolist), a mettre dans le routeur
+TodoListPage::display()->setTodosTable($dbConnection, $todoList->getTodoList());

@@ -95,6 +95,8 @@ class DataBase
      *
      * @return array
      */
+    // TODO : Changer le prepare en querry
+    // TODO : puis factoriser avec la méthode suivante
     public function getTasks(): array
     {
         // SELECT * FROM `task`
@@ -129,6 +131,35 @@ class DataBase
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getPonderators(): array
+    {
+        // SELECT * FROM `ponderator`
+        try {
+            $pdoStatement = $this->connectionPDO->query('SELECT * FROM ' . DB_POND_TB);
+        } catch (PDOException $error) {
+            // Erreur lors de la préparation
+            echo 'Erreur lors de la préparation';
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        if ($pdoStatement === false) {
+            // Erreur
+            echo 'Erreur pdoStatement';
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        // La requete s'est bien effectuée
+        $ponderatorsDatas = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+
+        // On nettoie les données
+        foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
+            $ponderatorsDatas[$key]["id"] = intval($ponderatorDatas["id"]);
+            $ponderatorsDatas[$key]["coefficient"] = intval($ponderatorDatas["coefficient"]);
+        }
+
+        return $ponderatorsDatas;
+    }
+
     /**
      * getTaskPonderators
      *
@@ -139,6 +170,7 @@ class DataBase
      *
      * @return array
      */
+    // TODO factoriser avec ci-dessous
     public function getTaskPonderators(int $taskId): array
     {
         // SELECT `pon_tas_link`.`fk_ponderator` FROM `pon_tas_link` WHERE (`pon_tas_link`.`fk_task` = 1)
@@ -172,7 +204,54 @@ class DataBase
         }
 
         // La requete s'est bien effectuée
-        return $pdoStatement->fetchAll(PDO::FETCH_COLUMN);
+        $taskPonderators = $pdoStatement->fetchAll(PDO::FETCH_COLUMN);
+
+        // On transforme les strings en int
+        foreach ($taskPonderators as $key => $value) {
+            $taskPonderators[$key] = intval($value);
+        }
+
+        return $taskPonderators;
+    }
+
+    // TODO factoriser avec ci-dessus
+    public function getPonderatorName(int $ponderatorId): string
+    {
+        // SELECT `name` FROM `ponderator` WHERE `id` = 1
+        // DB_POND_NAME DB_POND_TB DB_POND_ID
+        try {
+            $pdoStatement = $this->connectionPDO->prepare(
+                'SELECT ' . DB_POND_NAME .
+                ' FROM ' . DB_POND_TB .
+                ' WHERE ' . DB_POND_ID . ' = :ponderator_id');
+        } catch (PDOException $error) {
+            // Erreur lors de la préparation
+            echo 'Erreur lors de la préparation';
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        if ($pdoStatement === false) {
+            // Erreur
+            echo 'Erreur pdoStatement';
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        if (($pdoStatement->bindValue(':ponderator_id', $ponderatorId, PDO::PARAM_INT))) {
+            // Erreur pendant le bindValue
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        if ($pdoStatement->execute() === false) {
+            // Erreur d'exécution
+            echo 'Erreur d\'exécution';
+            echo $pdoStatement->errorInfo()[2];
+            // TODO : Renvoyer un message d'erreur
+        }
+
+        // La requete s'est bien effectuée
+        $arrayName = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+
+        return $arrayName[0]["name"];
     }
 
     /**
