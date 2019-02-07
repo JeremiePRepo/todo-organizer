@@ -56,7 +56,7 @@ class TodoList
         // On parcours les données des tâches
         foreach ($tasksDatas as $taskDatas) {
 
-            $taskId = intval($taskDatas['id']); // int
+            $taskId      = intval($taskDatas['id']); // int
             $taskContent = $taskDatas["content"]; // array
             $taskChecked = ($taskDatas["checked"] === '0') ? false : true; // bool
 
@@ -68,7 +68,31 @@ class TodoList
         }
 
         // TODO Comprendre usort et passer la méthode de Task dans cette classe
-        usort($this->todoList, array('Task', 'sortByWeight'));
+        usort($this->todoList, array('TodoList', 'sortByWeight'));
+    }
+
+    /**
+     * sortByWeight
+     *
+     * Méthode pour trier les tâches.
+     * Utilisé dans la méthode setList()
+     *
+     * Pour trier une liste de tâche :
+     * usort($this->todoList, array('TodoList', 'sortByWeight'));
+     *
+     * @param  Task $taskOne
+     * @param  Task $taskTwo
+     *
+     * @return int
+     */
+    public static function sortByWeight(Task $taskOne, Task $taskTwo): int
+    {
+        // Si les poids sont égaux, on ne modifie pas l'ordre
+        if ($taskOne->getWeight() === $taskTwo->getWeight()) {
+            return 0;
+        }
+        // Si il y a une différence, on change l'ordre
+        return ($taskOne->getWeight() > $taskTwo->getWeight()) ? -1 : 1;
     }
 
     /**

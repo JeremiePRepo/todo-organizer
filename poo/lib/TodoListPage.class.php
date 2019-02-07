@@ -27,46 +27,46 @@ class TodoListPage extends AbstractWebPage
     \*/
 
     // Textes
-    const TITLE_PAGE = 'TODO Organizer'; // string
-    const TITLE_TASK = 'Tâche'; // string
-    const TITLE_IS_CHECKED = 'État'; // string
-    const TITLE_NEW_TASK = 'Nouvelle tâche'; // string
-    const TITLE_TASK_CONTENT_INPUT = 'Tâche'; // string
-    const TITLE_TASK_POND_INPUT = 'Catégories'; // string
-    const NAME_TASK_CONTENT_INPUT = 'content'; // string
-    const NAME_TASK_POND_INPUT = 'ponderators'; // string
-    const NAME_TASK_POND_ENUM = 'ponderator-'; // string
+    const TITLE_PAGE                 = 'TODO Organizer'; // string
+    const TITLE_TASK                 = 'Tâche'; // string
+    const TITLE_IS_CHECKED           = 'État'; // string
+    const TITLE_NEW_TASK             = 'Nouvelle tâche'; // string
+    const TITLE_TASK_CONTENT_INPUT   = 'Tâche'; // string
+    const TITLE_TASK_POND_INPUT      = 'Catégories'; // string
+    const NAME_TASK_CONTENT_INPUT    = 'content'; // string
+    const NAME_TASK_POND_INPUT       = 'ponderators'; // string
+    const NAME_TASK_POND_ENUM        = 'ponderator-'; // string
     const NAME_NEW_TASK_SUBMIT_INPUT = 'Créer'; // string
-    const CHECKBOX_UNCKECKED = ''; // string
-    const CHECKBOX_CHECKED = '&#x2714;'; // string
+    const CHECKBOX_UNCKECKED         = ''; // string
+    const CHECKBOX_CHECKED           = '&#x2714;'; // string
 
     // Balises
-    const H1_OPEN = '<h1>'; // string
-    const H1_CLOSE = '</h1>'; // string
-    const TB_OPEN = '<table>'; // string
-    const TB_CLOSE = '</table>'; // string
-    const TB_TR_OPEN = '<tr>'; // string
-    const TB_TR_CLOSE = '</tr>'; // string
-    const TB_TH_OPEN = '<th>'; // string
-    const TB_TH_CLOSE = '</th>'; // string
-    const TB_TD_OPEN = '<td>'; // string
-    const TB_TD_CLOSE = '</td>'; // string
-    const FORM_POST_OPEN = '<form method="post"><fieldset>'; // string
-    const FORM_POST_CLOSE = '</fieldset></form>'; // string
-    const TAG_LEGEND_OPEN = '<legend>'; // string
-    const TAG_LEGEND_CLOSE = '</legend>'; // string
-    const TAG_LABEL_OPEN = '<label for="'; // string
-    const TAG_LABEL_CLOSE = '</label>'; // string
-    const TAG_INPUT_TEXT_OPEN = '<input type="text" required name="'; // string
+    const H1_OPEN                 = '<h1>'; // string
+    const H1_CLOSE                = '</h1>'; // string
+    const TB_OPEN                 = '<table>'; // string
+    const TB_CLOSE                = '</table>'; // string
+    const TB_TR_OPEN              = '<tr>'; // string
+    const TB_TR_CLOSE             = '</tr>'; // string
+    const TB_TH_OPEN              = '<th>'; // string
+    const TB_TH_CLOSE             = '</th>'; // string
+    const TB_TD_OPEN              = '<td>'; // string
+    const TB_TD_CLOSE             = '</td>'; // string
+    const FORM_POST_OPEN          = '<form method="post"><fieldset>'; // string
+    const FORM_POST_CLOSE         = '</fieldset></form>'; // string
+    const TAG_LEGEND_OPEN         = '<legend>'; // string
+    const TAG_LEGEND_CLOSE        = '</legend>'; // string
+    const TAG_LABEL_OPEN          = '<label for="'; // string
+    const TAG_LABEL_CLOSE         = '</label>'; // string
+    const TAG_INPUT_TEXT_OPEN     = '<input type="text" required name="'; // string
     const TAG_INPUT_CHECKBOX_OPEN = '<input type="checkbox" name="'; // string
-    const TAG_INPUT_SUBMIT_OPEN = '<input type="submit" value="'; // string
-    const TAG_DIV_OPEN = '<div>'; // string
-    const TAG_DIV_CLOSE = '</div>'; // string
-    const TAG_CLOSE = '">'; // string
-    const ATTR_VALUE = '" value="'; // string
+    const TAG_INPUT_SUBMIT_OPEN   = '<input type="submit" value="'; // string
+    const TAG_DIV_OPEN            = '<div>'; // string
+    const TAG_DIV_CLOSE           = '</div>'; // string
+    const TAG_CLOSE               = '">'; // string
+    const ATTR_VALUE              = '" value="'; // string
 
     private static $PageInstance = null; // WebPage
-    private static $content = ''; // string
+    private static $content      = ''; // string
 
     /*\
     ----------------------------------------
@@ -118,6 +118,14 @@ class TodoListPage extends AbstractWebPage
     // TODO factoriser les constantes
     public function setTodosTable(DataBase $dbConnection, array $todosList)
     {
+        // TODO : récupérer juste les éléments nécessaires (changer la requête SQL)
+        // On récupère les ID, les noms et les coefficients de tous les pondérateurs
+        $ponderatorsDatas = $dbConnection->getPonderators(); // array
+
+        // On traite le formulaire avant d'obtenir les datas
+        // TODO : à mettre dans le router mais attention aux paramètres
+        FormProcessor::process()->newTask($ponderatorsDatas);
+
         // On initialise la variable de sortie
         $content =
         self::TB_OPEN .
@@ -125,10 +133,6 @@ class TodoListPage extends AbstractWebPage
         self::TB_TH_OPEN .
         self::TITLE_TASK .
         self::TB_TH_CLOSE;
-
-        // TODO : récupérer juste les éléments nécessaires (changer la requête SQL)
-        // On récupère les ID, les noms et les coefficients de tous les pondérateurs
-        $ponderatorsDatas = $dbConnection->getPonderators(); // array
 
         // On Génène la liste des pondérateurs pour l'entête du tableau
         foreach ($ponderatorsDatas as $ponderatorDatas) {
@@ -141,6 +145,7 @@ class TodoListPage extends AbstractWebPage
         }
 
         // On termine l'entête du tableau
+        // TODO : mettre poids en constante
         $content .=
         self::TB_TH_OPEN .
         self::TITLE_IS_CHECKED .
@@ -201,6 +206,7 @@ class TodoListPage extends AbstractWebPage
         // TODO : utiliser les constantes
         // $content .= '<form><input type="submit" value="Enregistrer les modifications"><form>';
 
+        // TODO : à mettre dans le routeur
         $content .= $this->getNewTaskForm($ponderatorsDatas);
 
         // On envoie le résultat dans l'attribut de classe
@@ -217,6 +223,7 @@ class TodoListPage extends AbstractWebPage
      * @return string
      */
     // TODO factoriser les constantes
+    // TODO Faire un objet Forms
     public function getNewTaskForm(array $ponderatorsDatas): string
     {
 

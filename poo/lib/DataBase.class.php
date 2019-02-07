@@ -153,7 +153,7 @@ class DataBase
 
         // On nettoie les données
         foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
-            $ponderatorsDatas[$key]["id"] = intval($ponderatorDatas["id"]);
+            $ponderatorsDatas[$key]["id"]          = intval($ponderatorDatas["id"]);
             $ponderatorsDatas[$key]["coefficient"] = intval($ponderatorDatas["coefficient"]);
         }
 
@@ -298,5 +298,59 @@ class DataBase
 
         // La requete s'est bien effectuée
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * addNewTask
+     * 
+     * DataBase::connect()->addNewTask('content');
+     *
+     * @param  string $content
+     *
+     * @return bool
+     */
+    public function addNewTask(string $content): bool
+    {
+        // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0');
+        $content = 'Ceci est un test bordel';
+        try {
+            $pdoStatement = $this->connectionPDO->prepare(
+                'INSERT INTO `task` (`content`, `checked`) VALUES (:content, 0)');
+        } catch (PDOException $error) {
+
+            // Erreur lors de la préparation
+            echo 'Erreur lors de la préparation';
+            // TODO : Renvoyer un message d'erreur
+            return false;
+        }
+
+        if ($pdoStatement === false) {
+            // Erreur
+            echo 'Erreur pdoStatement';
+            // TODO : Renvoyer un message d'erreur
+            return false;
+        }
+
+        if (($pdoStatement->bindValue(':content', $content, PDO::PARAM_STR)) === false) {
+            // Erreur pendant le bindValue
+            echo 'Erreur bindValue<br>';
+            echo "<pre>";
+            var_dump($pdoStatement);
+            echo "</pre>";
+            // TODO : Renvoyer un message d'erreur
+            return false;
+        }
+
+        if ($pdoStatement->execute() === false) {
+            // Erreur d'exécution
+            echo 'Erreur d\'exécution';
+            echo $pdoStatement->errorInfo()[2];
+            // TODO : Renvoyer un message d'erreur
+            return false;
+        }
+
+        // La requete s'est bien effectuée
+        // TODO : Alerter du succès de l'opération
+        return true;
     }
 }

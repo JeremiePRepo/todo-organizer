@@ -39,10 +39,10 @@ class Task
      */
     public function __construct(int $taskId, string $content, array $ponderators, bool $checked)
     {
-        $this->taskId = $taskId;
-        $this->content = $content;
+        $this->taskId      = $taskId;
+        $this->content     = $content;
         $this->ponderators = $ponderators;
-        $this->checked = $checked;
+        $this->checked     = $checked;
 
         // On détermine le poids en fonction des pondérateurs
         foreach ($ponderators as $ponderator) {
@@ -93,25 +93,5 @@ class Task
     public function getWeight()
     {
         return $this->weight;
-    }
-
-    /**
-     * sortByWeight
-     *
-     * Méthode pour trier les tâches.
-     * Utilisé dans la méthode setList() de TodoList
-     *
-     * @param  mixed $a
-     * @param  mixed $b
-     *
-     * @return void
-     */
-    // TODO comprendre usort et passer cette méthode dans la classe TodoList
-    public static function sortByWeight($a, $b)
-    {
-        if ($a->weight == $b->weight) {
-            return 0;
-        }
-        return ($a->weight > $b->weight) ? -1 : 1;
     }
 }
