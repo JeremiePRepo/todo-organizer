@@ -46,15 +46,18 @@ class Task
 
         // On détermine le poids en fonction des pondérateurs
         foreach ($ponderators as $ponderator) {
-            $this->weight += $ponderator;
+
+            // TODO Passer plutot la connexion DB en paramètre où passer directement $ponderatorsDatas
+            $ponderatorDatas = DataBase::connect()->getPonderatorById($ponderator);
+            $this->weight += intval($ponderatorDatas[0]["coefficient"]);
         }
-        
+
         return $this;
     }
 
     /**
      * Get the value of taskId
-     */ 
+     */
     public function getTaskId()
     {
         return $this->taskId;
@@ -62,7 +65,7 @@ class Task
 
     /**
      * Get the value of content
-     */ 
+     */
     public function getContent()
     {
         return $this->content;
@@ -70,7 +73,7 @@ class Task
 
     /**
      * Get the value of ponderators
-     */ 
+     */
     public function getPonderators()
     {
         return $this->ponderators;
@@ -78,7 +81,7 @@ class Task
 
     /**
      * Get the value of checked
-     */ 
+     */
     public function getChecked()
     {
         return $this->checked;
@@ -86,9 +89,29 @@ class Task
 
     /**
      * Get the value of weight
-     */ 
+     */
     public function getWeight()
     {
         return $this->weight;
+    }
+
+    /**
+     * sortByWeight
+     *
+     * Méthode pour trier les tâches.
+     * Utilisé dans la méthode setList() de TodoList
+     *
+     * @param  mixed $a
+     * @param  mixed $b
+     *
+     * @return void
+     */
+    // TODO comprendre usort et passer cette méthode dans la classe TodoList
+    public static function sortByWeight($a, $b)
+    {
+        if ($a->weight == $b->weight) {
+            return 0;
+        }
+        return ($a->weight > $b->weight) ? -1 : 1;
     }
 }

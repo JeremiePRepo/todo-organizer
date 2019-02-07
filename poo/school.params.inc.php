@@ -43,7 +43,7 @@ define('DB_HOST', 'localhost');
 define('DB_NAME', 'todo.local');
 define('DB_CHAR', 'UTF8');
 define('DB_USER', 'root'); // TODO : créer un user
-define('DB_PASS', 'cool1705');
+define('DB_PASS', 'dadfba16');
 
 // Nom des tables et champs
 define('DB_TASK_TB', 'task');

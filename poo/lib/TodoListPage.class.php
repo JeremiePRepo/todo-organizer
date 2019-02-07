@@ -30,6 +30,15 @@ class TodoListPage extends AbstractWebPage
     const TITLE_PAGE = 'TODO Organizer'; // string
     const TITLE_TASK = 'Tâche'; // string
     const TITLE_IS_CHECKED = 'État'; // string
+    const TITLE_NEW_TASK = 'Nouvelle tâche'; // string
+    const TITLE_TASK_CONTENT_INPUT = 'Tâche'; // string
+    const TITLE_TASK_POND_INPUT = 'Catégories'; // string
+    const NAME_TASK_CONTENT_INPUT = 'content'; // string
+    const NAME_TASK_POND_INPUT = 'ponderators'; // string
+    const NAME_TASK_POND_ENUM = 'ponderator-'; // string
+    const NAME_NEW_TASK_SUBMIT_INPUT = 'Créer'; // string
+    const CHECKBOX_UNCKECKED = ''; // string
+    const CHECKBOX_CHECKED = '&#x2714;'; // string
 
     // Balises
     const H1_OPEN = '<h1>'; // string
@@ -42,10 +51,19 @@ class TodoListPage extends AbstractWebPage
     const TB_TH_CLOSE = '</th>'; // string
     const TB_TD_OPEN = '<td>'; // string
     const TB_TD_CLOSE = '</td>'; // string
-
-    // Inputs
-    const CHECKBOX_UNCKECKED = '<input type="checkbox">'; // string
-    const CHECKBOX_CHECKED = '<input type="checkbox" checked>'; // string
+    const FORM_POST_OPEN = '<form method="post"><fieldset>'; // string
+    const FORM_POST_CLOSE = '</fieldset></form>'; // string
+    const TAG_LEGEND_OPEN = '<legend>'; // string
+    const TAG_LEGEND_CLOSE = '</legend>'; // string
+    const TAG_LABEL_OPEN = '<label for="'; // string
+    const TAG_LABEL_CLOSE = '</label>'; // string
+    const TAG_INPUT_TEXT_OPEN = '<input type="text" required name="'; // string
+    const TAG_INPUT_CHECKBOX_OPEN = '<input type="checkbox" name="'; // string
+    const TAG_INPUT_SUBMIT_OPEN = '<input type="submit" value="'; // string
+    const TAG_DIV_OPEN = '<div>'; // string
+    const TAG_DIV_CLOSE = '</div>'; // string
+    const TAG_CLOSE = '">'; // string
+    const ATTR_VALUE = '" value="'; // string
 
     private static $PageInstance = null; // WebPage
     private static $content = ''; // string
@@ -82,61 +100,11 @@ class TodoListPage extends AbstractWebPage
     }
 
     /**
-     * getTodosList
-     *
-     * Renvois toutes les tâches en liste.
-     * 
-     * $content = TodoListPage::getTodosList($dbConnection);
-     *
-     * @param  DataBase $dbConnection
-     *
-     * @return string
-     */
-    // TODO : refaire en utilisant les objets
-    public function getTodosList(DataBase $dbConnection): string
-    {
-        // Initialisation de la variable de sortie
-        $output = '<ul>';
-
-        // On récupère les tâches
-        $tasksDatas = $dbConnection->getTasks(); // array
-
-        // On parcours les données des tâches
-        foreach ($tasksDatas as $taskDatas) {
-
-            $taskId = intval($taskDatas['id']); // int
-            $taskContent = $taskDatas["content"]; // array
-            $taskChecked = ($taskDatas["checked"] === '0') ? false : true; // bool
-            $checkbox = ($taskChecked === true) ? "&#9745;" : "&#9744;"; // string
-
-            $output .= '<li>tâche n°: ' . $taskId . ' - ' . $taskContent . ' ' . $checkbox . ' - Catégories : ';
-
-            $ponderatorsIds = $dbConnection->getTaskPonderators($taskId); // array
-
-            // On récupère les données de chaque pondérateurs
-            foreach ($ponderatorsIds as $ponderatorId) {
-
-                $ponderatorDatas = $dbConnection->getPonderatorById(intval($ponderatorId)); // array
-                $ponderatorName = $ponderatorDatas[0]["name"]; // string
-                $ponderatorCoeff = intval($ponderatorDatas[0]["coefficient"]); // int
-
-                $output .= $ponderatorName . '(' . $ponderatorCoeff . ') ';
-            }
-
-            $output .= '</li>';
-        }
-
-        $output .= '</ul>';
-
-        return $output;
-    }
-
-    /**
      * setTodosTable
      *
-     * Crée l'affichage de la Todolist en tableau Et enregistre le résultat 
+     * Crée l'affichage de la Todolist en tableau Et enregistre le résultat
      * dans la variable dans l'attribut de classe self::$content.
-     * 
+     *
      * TodoListPage::display()->setTodosTable($dbConnection, $todosList);
      * Ou bien :
      * TodoListPage::setTodosTable($dbConnection, $todoList->getTodoList());
@@ -147,6 +115,7 @@ class TodoListPage extends AbstractWebPage
      *
      * @return void
      */
+    // TODO factoriser les constantes
     public function setTodosTable(DataBase $dbConnection, array $todosList)
     {
         // On initialise la variable de sortie
@@ -159,7 +128,7 @@ class TodoListPage extends AbstractWebPage
 
         // TODO : récupérer juste les éléments nécessaires (changer la requête SQL)
         // On récupère les ID, les noms et les coefficients de tous les pondérateurs
-        $ponderatorsDatas = $dbConnection->getPonderators();
+        $ponderatorsDatas = $dbConnection->getPonderators(); // array
 
         // On Génène la liste des pondérateurs pour l'entête du tableau
         foreach ($ponderatorsDatas as $ponderatorDatas) {
@@ -197,7 +166,7 @@ class TodoListPage extends AbstractWebPage
                 $content .= self::TB_TD_OPEN;
 
                 // On initialise la variable avant le test
-                $isIdsCorresponds = self::CHECKBOX_UNCKECKED;
+                $isIdsCorresponds = self::CHECKBOX_UNCKECKED; // string
 
                 // On parcours les pondérateurs de la tâche courrante
                 foreach ($task->getPonderators() as $ponderatorId) {
@@ -206,7 +175,7 @@ class TodoListPage extends AbstractWebPage
                     if ($ponderatorDatas["id"] === $ponderatorId) {
 
                         // On coche la checkbox si il y a une correspondance
-                        $isIdsCorresponds = self::CHECKBOX_CHECKED;
+                        $isIdsCorresponds = self::CHECKBOX_CHECKED; // string
                     }
                 }
 
@@ -230,10 +199,74 @@ class TodoListPage extends AbstractWebPage
 
         // à Gérer de manière séparé ?
         // TODO : utiliser les constantes
-        $content .= '<form><input type="submit" value="Enregistrer les modifications"><form>';
+        // $content .= '<form><input type="submit" value="Enregistrer les modifications"><form>';
+
+        $content .= $this->getNewTaskForm($ponderatorsDatas);
 
         // On envoie le résultat dans l'attribut de classe
         self::$content = $content;
+    }
+
+    /**
+     * getNewTaskForm
+     *
+     * Retourne un fomulaire d'ajout de tâche.
+     *
+     * @param  array $ponderatorsDatas
+     *
+     * @return string
+     */
+    // TODO factoriser les constantes
+    public function getNewTaskForm(array $ponderatorsDatas): string
+    {
+
+        // Première partie statique du formulaire
+        $form =
+        self::FORM_POST_OPEN .
+        self::TAG_LEGEND_OPEN .
+        self::TITLE_NEW_TASK .
+        self::TAG_LEGEND_CLOSE .
+        self::TAG_LABEL_OPEN .
+        self::NAME_TASK_CONTENT_INPUT .
+        self::TAG_CLOSE .
+        self::TITLE_TASK_CONTENT_INPUT .
+        self::TAG_LABEL_CLOSE .
+        self::TAG_INPUT_TEXT_OPEN .
+        self::NAME_TASK_CONTENT_INPUT .
+        self::TAG_CLOSE .
+        self::TAG_LABEL_OPEN .
+        self::NAME_TASK_POND_INPUT .
+        self::TAG_CLOSE .
+        self::TITLE_TASK_POND_INPUT .
+        self::TAG_LABEL_CLOSE;
+
+        // Partie dynamique, en fonction des pondérateurs
+        foreach ($ponderatorsDatas as $ponderatorDatas) {
+            $form .=
+            self::TAG_DIV_OPEN .
+            self::TAG_LABEL_OPEN .
+            self::NAME_TASK_POND_ENUM .
+            $ponderatorDatas['id'] .
+            self::TAG_CLOSE .
+            self::TAG_INPUT_CHECKBOX_OPEN .
+            self::NAME_TASK_POND_ENUM .
+            $ponderatorDatas['id'] .
+            self::ATTR_VALUE .
+            $ponderatorDatas['id'] .
+            self::TAG_CLOSE . ' ' .
+            $ponderatorDatas['name'] .
+            self::TAG_LABEL_CLOSE .
+            self::TAG_DIV_CLOSE;
+        }
+
+        // Deuxième partie statique du formulaire
+        $form .=
+        self::TAG_INPUT_SUBMIT_OPEN .
+        self::NAME_NEW_TASK_SUBMIT_INPUT .
+        self::TAG_CLOSE .
+        self::FORM_POST_CLOSE;
+
+        return $form;
     }
 
     /**

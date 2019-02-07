@@ -48,6 +48,7 @@ class TodoList
      * @return void
      */
     public function setList() // : bool
+
     {
         // On récupère les tâches
         $tasksDatas = $this->dbConnection->getTasks(); // array
@@ -66,9 +67,8 @@ class TodoList
             array_push($this->todoList, $task);
         }
 
-        // On trie l'array
-        // TODO
-        // $this->todoList = asort($this->todoList);
+        // TODO Comprendre usort et passer la méthode de Task dans cette classe
+        usort($this->todoList, array('Task', 'sortByWeight'));
     }
 
     /**
