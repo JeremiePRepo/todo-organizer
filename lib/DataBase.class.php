@@ -191,7 +191,7 @@ class DataBase
             // TODO : Renvoyer un message d'erreur
         }
 
-        if (($pdoStatement->bindValue(':task_id', $taskId, PDO::PARAM_INT))) {
+        if (($pdoStatement->bindValue(':task_id', $taskId, PDO::PARAM_INT)) === false) {
             // Erreur pendant le bindValue
             // TODO : Renvoyer un message d'erreur
         }
@@ -236,7 +236,7 @@ class DataBase
             // TODO : Renvoyer un message d'erreur
         }
 
-        if (($pdoStatement->bindValue(':ponderator_id', $ponderatorId, PDO::PARAM_INT))) {
+        if (($pdoStatement->bindValue(':ponderator_id', $ponderatorId, PDO::PARAM_INT)) === false) {
             // Erreur pendant le bindValue
             // TODO : Renvoyer un message d'erreur
         }
@@ -284,7 +284,7 @@ class DataBase
             // TODO : Renvoyer un message d'erreur
         }
 
-        if (($pdoStatement->bindValue(':ponderator_id', $ponderatorId, PDO::PARAM_INT))) {
+        if (($pdoStatement->bindValue(':ponderator_id', $ponderatorId, PDO::PARAM_INT)) === false) {
             // Erreur pendant le bindValue
             // TODO : Renvoyer un message d'erreur
         }
@@ -334,9 +334,6 @@ class DataBase
         if (($pdoStatement->bindValue(':content', $content, PDO::PARAM_STR)) === false) {
             // Erreur pendant le bindValue
             echo 'Erreur bindValue<br>';
-            echo "<pre>";
-            var_dump($pdoStatement);
-            echo "</pre>";
             // TODO : Renvoyer un message d'erreur
             return false;
         }

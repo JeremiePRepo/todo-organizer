@@ -1,55 +1,26 @@
 <?php
 
-/*----------------------------------------*\
-    Includes
-\*----------------------------------------*/
+// On utilise le typage strict
+declare (strict_types = 1);
 
-// Liste des constantes nécessaires
-include 'datas/constants.inc.php';
+// On aura besoin du fichier de configuration
+include_once './params.inc.php';
 
-// Fonction pour construire la page
-include 'functions/constructPage.inc.php';
+// On charge automatiquement les classes abstraites, interfaces et classes
+spl_autoload_register(function ($class) {
+    if (file_exists(CLASSES_DIR . $class . CLASSES_SUF)) {
+        include CLASSES_DIR . $class . CLASSES_SUF;
+    }
+});
 
-// Fonction pour afficher la liste des Tâches
-include 'functions/displayTasksList.inc.php';
-
-// Fonction pour traiter le formulaire d'ajout de tâche
-include 'functions/processAddTaskForm.inc.php';
-
-// Fonction pour compter les tâches
-include 'functions/countTasks.inc.php';
-
-// Fonction pour supprimer une tâche
-include 'functions/deleteTask.inc.php';
-
-// Fonction pour traiter le formulaire de connexion
-include 'functions/processConnectionForm.inc.php';
-
-// Fonction pour traiter le bouton de déconnexion
-include 'functions/disconnect.inc.php';
-
-
-
-/*----------------------------------------*\
-    Functions call
-\*----------------------------------------*/
-
+// On appelle les variables de session
 session_start();
 
-// On vérifie que l'utilisateur ne se soit pas déconnecté
-disconnect();
+// On instancie une connexion
+$dbConnection = DataBase::connect(); // object DataBase
 
-// On traite le formulaire de connection
-processConnectionForm();
+// A mettre dans le routeur pour la page Todolist
+$todoList = new TodoList($dbConnection); // object TodoList
 
-// On vérifie qu'une têche n'est pas en cours de suppression
-deleteTask();
-
-// On traite l'envoie du formulaire
-processAddTaskForm();
-
-// On traite la liste des Tâches
-$content = displayTasksList();
-
-// On affiche la page
-echo constructPage($content);
+// On affiche la page (pour la page todolist), a mettre dans le routeur
+TodoListPage::display()->setTodosTable($dbConnection, $todoList->getTodoList());
