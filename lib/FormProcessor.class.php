@@ -99,9 +99,6 @@ class FormProcessor
         if(DataBase::connect()->addNewTask($_POST["content"])){
             echo 'OK';
         }
-        else {
-            echo 'NOK';
-        }
 
         // On vérifie qu'un formulaire a bien été envoyé
         // if ((filter_has_var(INPUT_POST , 'title')) AND (filter_has_var(INPUT_POST , 'comments'))){

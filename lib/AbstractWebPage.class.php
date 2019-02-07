@@ -26,7 +26,17 @@ abstract class AbstractWebPage
     ----------------------------------------
     \*/
 
+    private $alertMessage = '<pre>Ceci est un message</pre>'; // string
+
+    // Fichier de paramétrages
     const PARAMS_FILE = './params.inc.php';
+
+    // HTML
+    const HTML_O  = '<!DOCTYPE html><html lang="';
+    const HTML_C  = '</body></html>';
+    const HEAD_O  = '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge">';
+    const TITLE_O = '<title>';
+    const TITLE_C = '</title></head><body>';
 
     /*\
     ----------------------------------------
@@ -51,19 +61,16 @@ abstract class AbstractWebPage
     public function __destruct()
     {
         echo
-        '<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            ' . $this->getHTMLStyles() . '
-            <title>Document</title>
-        </head>
-        <body>
-            ' . $this->getHtmlContent() . '
-        </body>
-        </html>';
+        self::HTML_O .
+        SITE_LANG .
+        self::HEAD_O .
+        $this->getHTMLStyles() .
+        self::TITLE_O .
+        SITE_TITLE .
+        self::TITLE_C .
+        $this->getAlertMessage() .
+        $this->getHtmlContent() .
+        self::HTML_C;
     }
 
     /**
@@ -92,5 +99,29 @@ abstract class AbstractWebPage
             $htmlStyles .= $style;
         }
         return $htmlStyles;
+    }
+
+    /**
+     * getAlertMessage
+     *
+     * @return void
+     */
+    public function getAlertMessage(): string
+    {
+        return $this->alertMessage;
+    }
+
+    /**
+     * addAlertMessage
+     * 
+     * WebPage::display()->addAlertMessage($message);
+     *
+     * @param  string $message
+     *
+     * @return void
+     */
+    public function addAlertMessage(string $message)
+    {
+        $this->alertMessage .= $message;
     }
 }

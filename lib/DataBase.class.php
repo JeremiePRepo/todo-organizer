@@ -64,8 +64,9 @@ class DataBase
                 DB_USER,
                 DB_PASS);
         } catch (PDOException $error) {
-            // TODO : On envoie le message d'erreur dans la section alerte de la page Web
-            echo $error;
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            TodoListPage::display()->addAlertMessage('Erreur de connexion.');
         }
     }
 
@@ -101,7 +102,7 @@ class DataBase
     {
         // SELECT * FROM `task`
         try {
-            $pdoStatement = $this->connectionPDO->prepare('SELECT * FROM ' . DB_TASK_TB);
+            $pdoStatement = $this->connectionPDO->query('SELECT * FROM ' . DB_TASK_TB);
         } catch (PDOException $error) {
             // Erreur lors de la préparation
             echo 'Erreur lors de la préparation';
@@ -111,19 +112,6 @@ class DataBase
         if ($pdoStatement === false) {
             // Erreur
             echo 'Erreur pdoStatement';
-            // TODO : Renvoyer un message d'erreur
-        }
-
-        // TODO : enlever bindvalue
-        if (($pdoStatement->bindValue('', ''))) {
-            // Erreur pendant le bindValue
-            // TODO : Renvoyer un message d'erreur
-        }
-
-        if ($pdoStatement->execute() === false) {
-            // Erreur d'exécution
-            echo 'Erreur d\'exécution';
-            echo $pdoStatement->errorInfo()[2];
             // TODO : Renvoyer un message d'erreur
         }
 
@@ -302,7 +290,7 @@ class DataBase
 
     /**
      * addNewTask
-     * 
+     *
      * DataBase::connect()->addNewTask('content');
      *
      * @param  string $content
@@ -312,7 +300,6 @@ class DataBase
     public function addNewTask(string $content): bool
     {
         // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0');
-        $content = 'Ceci est un test bordel';
         try {
             $pdoStatement = $this->connectionPDO->prepare(
                 'INSERT INTO `task` (`content`, `checked`) VALUES (:content, 0)');
