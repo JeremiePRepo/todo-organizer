@@ -340,4 +340,66 @@ class DataBase
         // On récupère l'ID de la dernière ligne insérée
         return intval($this->connectionPDO->lastInsertId());
     }
+
+    public function newPonderatorRelation(int $taskId, int $pondId)
+    {
+        // INSERT INTO `pon_tas_link` (`fk_ponderator`, `fk_task`) VALUES ('2', '8');
+        $sql    = 'INSERT INTO ' . LINK_TASK_POND . ' (' . FK_TASK . ', ' . FK_PONDERATOR . ')VALUES (:task_id, :pond_id)';
+        $values = array(
+            array(':task_id', $taskId, PDO::PARAM_INT),
+            array(':pond_id', $pondId, PDO::PARAM_INT));
+        $return = 1;
+        $this->request($sql, $values, $return);
+    }
+
+    public function request(string $sql, array $values, int $return)
+    {
+        try {
+            $pdoStatement = $this->connectionPDO->prepare($sql);
+        } catch (PDOException $error) {
+            // Erreur dans la préparation de la requête
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur dans la préparation de la requête');
+            return false;
+        }
+        if ($pdoStatement === false) {
+            // Erreur PDOStatement
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur PDOStatement');
+            return false;
+        }
+        foreach ($values as $value) {
+            if (($pdoStatement->bindValue($value[0], $value[1], $value[2])) === false) {
+                // Erreur pendant le bindValue
+                // TODO : Passer la page en attribut
+                // TODO : L'erreur n'est pas interceptée ?
+                // TODO : Passer le message en constante
+                TodoListPage::display()->addAlertMessage('Erreur bindValue');
+                return false;
+            }
+        }
+        if ($pdoStatement->execute() === false) {
+            // Erreur d'exécution
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur d\'exécution');
+            return false;
+        }
+
+        // La requete s'est bien effectuée, on envoie la valeur retour demandée
+        switch ($return) {
+            case 1:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
 }

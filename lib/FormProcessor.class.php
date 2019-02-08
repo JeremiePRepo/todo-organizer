@@ -90,7 +90,7 @@ class FormProcessor
         // TODO : créer une constante pour le message
         $taskId = DataBase::connect()->addNewTask($_POST["content"]);
 
-        if($taskId === 0){
+        if ($taskId === 0) {
             // 0 est le code d'erreur lors de l'enregistrment
             TodoListPage::display()->addAlertMessage('Il y a eu un problème d\'enregistrement');
             return;
@@ -100,18 +100,26 @@ class FormProcessor
         // TODO : passer database et TodoListPage en paramètre
         // TODO : créer une constante pour le message
         TodoListPage::display()->addAlertMessage('La tâche a bien été enregistrée.');
-        
+
         // On check les pondérateurs
+
+        // TODO changer les names des pondérateur dans le formulaire
+
         $nbPonderators = count($ponderatorsDatas);
+        echo "<pre>";
+        var_dump($ponderatorsDatas);
+        echo "</pre>";
         for ($i = 1; $i <= $nbPonderators; $i++) {
             if (filter_has_var(INPUT_POST, TodoListPage::NAME_TASK_POND_ENUM . $i) === true) {
                 echo 'On a trouvé ' . TodoListPage::NAME_TASK_POND_ENUM . $i . ' <br>';
                 echo 'Et on le  prouve : ' . $_POST[TodoListPage::NAME_TASK_POND_ENUM . $i] . ' <br>';
 
-                // On insère les relations avec les pondérateurs en base
+                $ponId = intval($_POST[TodoListPage::NAME_TASK_POND_ENUM . $i]);
 
+                // On insère en BDD la relation trouvée avec le pondérateurs
+                // TODO : Passer database en paramètre
+                DataBase::connect()->newPonderatorRelation($taskId, $ponId);
             }
         }
-
     }
 }
