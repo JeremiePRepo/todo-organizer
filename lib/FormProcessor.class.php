@@ -85,40 +85,33 @@ class FormProcessor
             return;
         }
 
+        // On insère la tâche en base
+        // TODO : passer database et TodoListPage en paramètre
+        // TODO : créer une constante pour le message
+        $taskId = DataBase::connect()->addNewTask($_POST["content"]);
+
+        if($taskId === 0){
+            // 0 est le code d'erreur lors de l'enregistrment
+            TodoListPage::display()->addAlertMessage('Il y a eu un problème d\'enregistrement');
+            return;
+        }
+
+        // L'insertion s'est bien passé
+        // TODO : passer database et TodoListPage en paramètre
+        // TODO : créer une constante pour le message
+        TodoListPage::display()->addAlertMessage('La tâche a bien été enregistrée.');
+        
         // On check les pondérateurs
         $nbPonderators = count($ponderatorsDatas);
         for ($i = 1; $i <= $nbPonderators; $i++) {
             if (filter_has_var(INPUT_POST, TodoListPage::NAME_TASK_POND_ENUM . $i) === true) {
                 echo 'On a trouvé ' . TodoListPage::NAME_TASK_POND_ENUM . $i . ' <br>';
                 echo 'Et on le  prouve : ' . $_POST[TodoListPage::NAME_TASK_POND_ENUM . $i] . ' <br>';
+
+                // On insère les relations avec les pondérateurs en base
+
             }
         }
 
-        // On insère la tâche en base
-        // TODO : passer database en paramètre
-        if(DataBase::connect()->addNewTask($_POST["content"])){
-            echo 'OK';
-        }
-
-        // On vérifie qu'un formulaire a bien été envoyé
-        // if ((filter_has_var(INPUT_POST , 'title')) AND (filter_has_var(INPUT_POST , 'comments'))){
-
-        //     // On initialise un compteur
-        //     $i = 1;
-
-        //     // On incrémente le compteur pour éviter d'écraser un fichier
-        //     while (file_exists(TASKS_FOLDER . date('Y-m-d') . '-' . $i . '.txt')) {
-        //         $i++;
-        //     }
-
-        //     // Pour éviter un message d'erreur
-        //     if( !isset($_POST['categorie-1']) ){ $_POST['categorie-1'] = null; }
-        //     if( !isset($_POST['categorie-2']) ){ $_POST['categorie-2'] = null; }
-        //     if( !isset($_POST['categorie-3']) ){ $_POST['categorie-3'] = null; }
-        //     if( !isset($_POST['categorie-4']) ){ $_POST['categorie-4'] = null; }
-
-        //     // On crée un nouveau fichier task
-        //     file_put_contents(TASKS_FOLDER . date('Y-m-d') . "-" . $i . ".txt", $_POST['title'] . "\n\r" . $_POST['categorie-1'] . "\n\r" . $_POST['categorie-2'] . "\n\r" . $_POST['categorie-3'] . "\n\r" . $_POST['categorie-4'] . "\n\r" . $_POST['comments']);
-        // }
     }
 }

@@ -26,7 +26,7 @@ abstract class AbstractWebPage
     ----------------------------------------
     \*/
 
-    private $alertMessage = '<pre>Ceci est un message</pre>'; // string
+    private $alertMessage = ''; // string
 
     // Fichier de paramétrages
     const PARAMS_FILE = './params.inc.php';
@@ -106,9 +106,13 @@ abstract class AbstractWebPage
      *
      * @return void
      */
+    // TODO : passer <pre> en constante
     public function getAlertMessage(): string
     {
-        return $this->alertMessage;
+        if($this->alertMessage !== ''){
+            return '<pre>'.$this->alertMessage.'</pre>';
+        }
+        return '';
     }
 
     /**

@@ -295,11 +295,11 @@ class DataBase
      *
      * @param  string $content
      *
-     * @return bool
+     * @return int
      */
-    public function addNewTask(string $content): bool
+    public function addNewTask(string $content): int
     {
-        // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0');
+        // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0'); SELECT LAST_INSERT_ID();
         try {
             $pdoStatement = $this->connectionPDO->prepare(
                 'INSERT INTO `task` (`content`, `checked`) VALUES (:content, 0)');
@@ -308,21 +308,21 @@ class DataBase
             // Erreur lors de la préparation
             echo 'Erreur lors de la préparation';
             // TODO : Renvoyer un message d'erreur
-            return false;
+            return 0;
         }
 
         if ($pdoStatement === false) {
             // Erreur
             echo 'Erreur pdoStatement';
             // TODO : Renvoyer un message d'erreur
-            return false;
+            return 0;
         }
 
         if (($pdoStatement->bindValue(':content', $content, PDO::PARAM_STR)) === false) {
             // Erreur pendant le bindValue
             echo 'Erreur bindValue<br>';
             // TODO : Renvoyer un message d'erreur
-            return false;
+            return 0;
         }
 
         if ($pdoStatement->execute() === false) {
@@ -330,11 +330,14 @@ class DataBase
             echo 'Erreur d\'exécution';
             echo $pdoStatement->errorInfo()[2];
             // TODO : Renvoyer un message d'erreur
-            return false;
+            return 0;
         }
 
-        // La requete s'est bien effectuée
+        // Ici La requete s'est bien effectuée
+
         // TODO : Alerter du succès de l'opération
-        return true;
+
+        // On récupère l'ID de la dernière ligne insérée
+        return intval($this->connectionPDO->lastInsertId());
     }
 }

@@ -122,10 +122,6 @@ class TodoListPage extends AbstractWebPage
         // On récupère les ID, les noms et les coefficients de tous les pondérateurs
         $ponderatorsDatas = $dbConnection->getPonderators(); // array
 
-        // On traite le formulaire avant d'obtenir les datas
-        // TODO : à mettre dans le router mais attention aux paramètres
-        FormProcessor::process()->newTask($ponderatorsDatas);
-
         // On initialise la variable de sortie
         $content =
         self::TB_OPEN .
