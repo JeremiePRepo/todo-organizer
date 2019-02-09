@@ -16,6 +16,9 @@ spl_autoload_register(function ($class) {
 // On appelle les variables de session
 session_start();
 
+// On traite les variables globales
+GlobalVarsProcessor::process();
+
 // On instancie une connexion
 $dbConnection = DataBase::connect(); // object DataBase
 
@@ -23,9 +26,13 @@ $dbConnection = DataBase::connect(); // object DataBase
 // On récupère les ID, les noms et les coefficients de tous les pondérateurs
 $ponderatorsDatas = $dbConnection->getPonderators(); // array
 
-// On traite le formulaire avant d'obtenir les datas
+// On traite le formulaire d'ajout avant d'obtenir les datas
 // TODO : à mettre dans le router mais attention aux paramètres
 FormProcessor::process()->newTask($ponderatorsDatas);
+
+// On traite le formulaire de suppression avant d'obtenir les datas
+// TODO : à mettre dans le router
+FormProcessor::process()->deleteTask();
 
 // A mettre dans le routeur pour la page Todolist : remplis la liste des tâches
 $todoList = new TodoList($dbConnection); // object TodoList

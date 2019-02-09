@@ -105,10 +105,10 @@ class TodoListPage extends AbstractWebPage
      * Crée l'affichage de la Todolist en tableau Et enregistre le résultat
      * dans la variable dans l'attribut de classe self::$content.
      *
-     * TodoListPage::display()->setTodosTable($dbConnection, $todosList);
+     * * TodoListPage::display()->setTodosTable($dbConnection, $todosList);
      * Ou bien :
-     * TodoListPage::setTodosTable($dbConnection, $todoList->getTodoList());
-     * TodoListPage::display();
+     * * TodoListPage::setTodosTable($dbConnection, $todoList->getTodoList());
+     * * TodoListPage::display();
      *
      * @param  DataBase $dbConnection
      * @param  array $todosList
@@ -127,6 +127,9 @@ class TodoListPage extends AbstractWebPage
         self::TB_OPEN .
         self::TB_TR_OPEN .
         self::TB_TH_OPEN .
+        self::TITLE_IS_CHECKED .
+        self::TB_TH_CLOSE .
+        self::TB_TH_OPEN .
         self::TITLE_TASK .
         self::TB_TH_CLOSE;
 
@@ -144,10 +147,9 @@ class TodoListPage extends AbstractWebPage
         // TODO : mettre poids en constante
         $content .=
         self::TB_TH_OPEN .
-        self::TITLE_IS_CHECKED .
+        'Poids' .
         self::TB_TH_CLOSE .
         self::TB_TH_OPEN .
-        'Poids' .
         self::TB_TH_CLOSE .
         self::TB_TR_CLOSE;
 
@@ -157,6 +159,9 @@ class TodoListPage extends AbstractWebPage
             // On insère le contenu principale de la tâche
             $content .=
             self::TB_TR_OPEN .
+            self::TB_TD_OPEN;
+            $content .= ($task->getChecked() === true) ? self::CHECKBOX_CHECKED : self::CHECKBOX_UNCKECKED;
+            $content .=
             self::TB_TD_OPEN .
             $task->getContent() .
             self::TB_TD_CLOSE;
@@ -186,12 +191,14 @@ class TodoListPage extends AbstractWebPage
             }
 
             // Colonne Etat de la tâche (faite ou non)
-            $content .= self::TB_TD_OPEN;
-            $content .= ($task->getChecked() === true) ? self::CHECKBOX_CHECKED : self::CHECKBOX_UNCKECKED;
+            // $content .= self::TB_TD_OPEN;
             $content .=
             self::TB_TD_CLOSE .
             self::TB_TD_OPEN .
             $task->getWeight() .
+            self::TB_TD_CLOSE .
+            self::TB_TD_OPEN .
+            '<a href="?delete=' . $task->getTaskId() . '">[X]</a>' .
             self::TB_TD_CLOSE .
             self::TB_TR_CLOSE;
         }
@@ -244,16 +251,16 @@ class TodoListPage extends AbstractWebPage
         self::TAG_LABEL_CLOSE;
 
         // Partie dynamique, en fonction des pondérateurs
-        foreach ($ponderatorsDatas as $ponderatorDatas) {
+        foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
             $form .=
             self::TAG_DIV_OPEN .
             self::TAG_LABEL_OPEN .
             self::NAME_TASK_POND_ENUM .
-            $ponderatorDatas['id'] .
+            $key .
             self::TAG_CLOSE .
             self::TAG_INPUT_CHECKBOX_OPEN .
             self::NAME_TASK_POND_ENUM .
-            $ponderatorDatas['id'] .
+            $key .
             self::ATTR_VALUE .
             $ponderatorDatas['id'] .
             self::TAG_CLOSE . ' ' .

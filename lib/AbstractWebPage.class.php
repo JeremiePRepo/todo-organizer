@@ -9,9 +9,6 @@ page Web. Si une méthode doit renvoyer
 du HTML, elle se trouvera sûrement ici.
 
 Patron de conception : singleton.
-
-Pour instancier la WebPage :
-WebPage::display();
 --------------------------------------------
 \*/
 
@@ -60,6 +57,9 @@ abstract class AbstractWebPage
      */
     public function __destruct()
     {
+        // Si un message a été envoyé a la page précédente, on l'ajoute
+        $this->addAlertMessage(GlobalVarsProcessor::process()->getInfoMessage());
+
         echo
         self::HTML_O .
         SITE_LANG .
@@ -109,15 +109,15 @@ abstract class AbstractWebPage
     // TODO : passer <pre> en constante
     public function getAlertMessage(): string
     {
-        if($this->alertMessage !== ''){
-            return '<pre>'.$this->alertMessage.'</pre>';
+        if ($this->alertMessage !== '') {
+            return '<pre>' . $this->alertMessage . '</pre>';
         }
         return '';
     }
 
     /**
      * addAlertMessage
-     * 
+     *
      * WebPage::display()->addAlertMessage($message);
      *
      * @param  string $message

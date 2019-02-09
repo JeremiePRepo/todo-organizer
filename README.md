@@ -2,5 +2,4 @@
 Todo organizer for a school project
 
 # TODO
-- changer les names des pondérateur dans le formulaire
-- finaliser la méthode nouvelle tâche
+- ajouter les htmlspecialchars() à chaque affichage depuis la BDD

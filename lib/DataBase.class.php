@@ -152,7 +152,7 @@ class DataBase
      * getTaskPonderators
      *
      * Renvoie la liste des catégories correspondant à un ID de tâche.
-     * DataBase::connect()->getTasks($taskId);
+     * DataBase::connect()->getTaskPonderators($taskId);
      *
      * @param  int $taskId
      *
@@ -341,25 +341,116 @@ class DataBase
         return intval($this->connectionPDO->lastInsertId());
     }
 
-    public function newPonderatorRelation(int $taskId, int $pondId)
+    /**
+     * newPonderatorRelation
+     *
+     * @param  int $taskId
+     * @param  int $pondId
+     *
+     * @return void
+     */
+    public function newPonderatorRelation(int $taskId, int $pondId): bool
     {
         // INSERT INTO `pon_tas_link` (`fk_ponderator`, `fk_task`) VALUES ('2', '8');
-        $sql    = 'INSERT INTO ' . LINK_TASK_POND . ' (' . FK_TASK . ', ' . FK_PONDERATOR . ')VALUES (:task_id, :pond_id)';
+        $sql    = 'INSERT INTO ' . LINK_TASK_POND . ' (' . FK_TASK . ', ' . FK_PONDERATOR . ') VALUES (:task_id, :pond_id)';
         $values = array(
             array(':task_id', $taskId, PDO::PARAM_INT),
             array(':pond_id', $pondId, PDO::PARAM_INT));
+
+        // TODO : créer des constantes pour les types de retours
+        // 1 = bool
         $return = 1;
-        $this->request($sql, $values, $return);
+        if ($this->doRequest($sql, $values, $return) === false) {
+            // Il y a eu un problème
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
     }
 
-    public function request(string $sql, array $values, int $return)
+    /**
+     * deleteRelations
+     *
+     * * DataBase::connect()->deleteRelations($taskId)
+     *
+     * @param  int $taskId
+     *
+     * @return bool
+     */
+    public function deleteRelations(int $taskId): bool
+    {
+        // DELETE FROM `pon_tas_link` WHERE fk_task = 66
+        $sql    = 'DELETE FROM ' . LINK_TASK_POND . ' WHERE ' . FK_TASK . ' = :task_id';
+        $values = array(array(':task_id', $taskId, PDO::PARAM_INT));
+
+        // TODO : créer des constantes pour les types de retours
+        // 1 = bool
+        $return = 1;
+        if ($this->doRequest($sql, $values, $return) === false) {
+            // Il y a eu un problème
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
+     * deleteTask
+     *
+     * * DataBase::connect()->deleteTask($taskId)
+     *
+     * @param  int $taskId
+     *
+     * @return bool
+     */
+    public function deleteTask(int $taskId): bool
+    {
+        $sql    = 'DELETE FROM ' . DB_TASK_TB . ' WHERE ' . DB_TASK_ID . ' = :task_id';
+        $values = array(array(':task_id', $taskId, PDO::PARAM_INT));
+
+        // TODO : créer des constantes pour les types de retours
+        // 1 = bool
+        $return = 1;
+        if ($this->doRequest($sql, $values, $return) === false) {
+            // Il y a eu un problème
+            // TODO : Passer la page en attribut
+            // TODO : L'erreur n'est pas interceptée ?
+            // TODO : Passer le message en constante
+            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
+     * doRequest
+     *
+     * @param  string $sql
+     * @param  array $values
+     * @param  int $return
+     *
+     * @return mixed
+     */
+    public function doRequest(string $sql, array $values, int $return)
     {
         try {
             $pdoStatement = $this->connectionPDO->prepare($sql);
         } catch (PDOException $error) {
             // Erreur dans la préparation de la requête
             // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
+            // ? L'erreur n'est pas interceptée ?
             // TODO : Passer le message en constante
             TodoListPage::display()->addAlertMessage('Erreur dans la préparation de la requête');
             return false;
@@ -367,7 +458,7 @@ class DataBase
         if ($pdoStatement === false) {
             // Erreur PDOStatement
             // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
+            // ? L'erreur n'est pas interceptée ?
             // TODO : Passer le message en constante
             TodoListPage::display()->addAlertMessage('Erreur PDOStatement');
             return false;
@@ -376,7 +467,7 @@ class DataBase
             if (($pdoStatement->bindValue($value[0], $value[1], $value[2])) === false) {
                 // Erreur pendant le bindValue
                 // TODO : Passer la page en attribut
-                // TODO : L'erreur n'est pas interceptée ?
+                // ? L'erreur n'est pas interceptée ?
                 // TODO : Passer le message en constante
                 TodoListPage::display()->addAlertMessage('Erreur bindValue');
                 return false;
@@ -385,7 +476,7 @@ class DataBase
         if ($pdoStatement->execute() === false) {
             // Erreur d'exécution
             // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
+            // ? L'erreur n'est pas interceptée ?
             // TODO : Passer le message en constante
             TodoListPage::display()->addAlertMessage('Erreur d\'exécution');
             return false;
@@ -395,11 +486,9 @@ class DataBase
         switch ($return) {
             case 1:
                 return true;
-                break;
 
             default:
                 return false;
-                break;
         }
     }
 }

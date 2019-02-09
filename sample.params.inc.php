@@ -29,7 +29,8 @@ define('SITE_TITLE', 'TODO Organizer');
 define('SITE_LANG', 'fr');
 define('SITE_STYLES', array(
     '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" type="text/css">',
-    '<link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura-dark.css" type="text/css">'));
+    '<link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura-dark.css" type="text/css">',
+    '<link rel="stylesheet" href="./public/css/style.css">'));
 
 /*\
 ---------------------------------------

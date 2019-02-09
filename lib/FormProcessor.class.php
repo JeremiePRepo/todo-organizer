@@ -102,24 +102,69 @@ class FormProcessor
         TodoListPage::display()->addAlertMessage('La tâche a bien été enregistrée.');
 
         // On check les pondérateurs
+        foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
+            if (filter_has_var(INPUT_POST, 'ponderator-' . $key) === true) {
 
-        // TODO changer les names des pondérateur dans le formulaire
-
-        $nbPonderators = count($ponderatorsDatas);
-        echo "<pre>";
-        var_dump($ponderatorsDatas);
-        echo "</pre>";
-        for ($i = 1; $i <= $nbPonderators; $i++) {
-            if (filter_has_var(INPUT_POST, TodoListPage::NAME_TASK_POND_ENUM . $i) === true) {
-                echo 'On a trouvé ' . TodoListPage::NAME_TASK_POND_ENUM . $i . ' <br>';
-                echo 'Et on le  prouve : ' . $_POST[TodoListPage::NAME_TASK_POND_ENUM . $i] . ' <br>';
-
-                $ponId = intval($_POST[TodoListPage::NAME_TASK_POND_ENUM . $i]);
+                // Id du pondérateur
+                $ponId = intval($_POST[TodoListPage::NAME_TASK_POND_ENUM . $key]);
 
                 // On insère en BDD la relation trouvée avec le pondérateurs
                 // TODO : Passer database en paramètre
                 DataBase::connect()->newPonderatorRelation($taskId, $ponId);
             }
         }
+    }
+
+    /**
+     * deleteTask
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     *
+     * @return void
+     */
+    public function deleteTask()
+    {
+        // On vérifie si le formulaire à été validé
+        // TODO mettre delete en constante
+        if (filter_has_var(INPUT_GET, 'delete') === false) {
+
+            // Si le formulaire n'a pas été remplis, pas de traitement
+            return;
+        }
+
+        // Ici, un bouton suppression à été cliqué
+        $taskId = intval($_GET['delete']);
+        // TODO : vérifier si $taskId correspond à une tâche existante
+
+        // On supprime les relations entre tâche et pondération
+        // TODO : attention aux dépendances
+        if ((DataBase::connect()->deleteRelations($taskId)) === false) {
+            // L'insertion s'est bien passé
+            // TODO : passer database et TodoListPage en paramètre
+            // TODO : créer une constante pour le message
+            TodoListPage::display()->addAlertMessage('Il y a eu une erreur.');
+            return;
+        };
+
+        // Ici, la suppression des dépendances s'est bien passé
+        // On supprime la tâche
+        if ((DataBase::connect()->deleteTask($taskId)) === false) {
+            // L'insertion s'est bien passé
+            // TODO : passer database et TodoListPage en paramètre
+            // TODO : créer une constante pour le message
+            TodoListPage::display()->addAlertMessage('Il y a eu une erreur.');
+            return;
+        }
+
+        // TODO : Ttraitement des variables session
+        // On envoie un message pour le rechargement de la page
+        $_SESSION['alert_message'] = 'Tâche supprimée.';
+
+        // Rechargement de la page pour nettoyer l'url.
+        $host = $_SERVER['HTTP_HOST'];
+        $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        header("Location: http://$host$uri");
+        exit;
     }
 }

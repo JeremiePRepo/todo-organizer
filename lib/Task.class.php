@@ -56,7 +56,11 @@ class Task
     }
 
     /**
-     * Get the value of taskId
+     * getTaskId
+     *
+     * $this->getTaskId()
+     *
+     * @return int $this->taskId
      */
     public function getTaskId()
     {
