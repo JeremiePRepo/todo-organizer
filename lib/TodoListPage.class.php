@@ -135,7 +135,7 @@ class TodoListPage extends AbstractWebPage {
             // On met le nom du pondérateur en entête
             $content .=
             self::TB_TH_OPEN .
-            $ponderatorDatas["name"] .
+            htmlspecialchars($ponderatorDatas["name"]) .
             self::TB_TH_CLOSE;
         }
 
@@ -159,7 +159,7 @@ class TodoListPage extends AbstractWebPage {
             $content .= ($task->getChecked() === true) ? self::CHECKBOX_CHECKED : self::CHECKBOX_UNCKECKED;
             $content .=
             self::TB_TD_OPEN .
-            $task->getContent() .
+            htmlspecialchars($task->getContent()) .
             self::TB_TD_CLOSE;
 
             // On parcours la liste de tous les pondérateurs
@@ -259,7 +259,7 @@ class TodoListPage extends AbstractWebPage {
             self::ATTR_VALUE .
             $ponderatorDatas['id'] .
             self::TAG_CLOSE . ' ' .
-            $ponderatorDatas['name'] .
+            htmlspecialchars($ponderatorDatas['name']) .
             self::TAG_LABEL_CLOSE .
             self::TAG_DIV_CLOSE;
         }

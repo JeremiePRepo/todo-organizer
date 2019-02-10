@@ -30,7 +30,7 @@ class FormProcessor {
 
     private static $formProcessorInstance = null; // DataBase
 
-    //* Dépendences
+    // Dépendences
     private $globalVars; // GlobalVarsManager
     private $dataBase; // DataBase
 
@@ -46,7 +46,6 @@ class FormProcessor {
 
     /**
      * __construct
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * En privé car singleton.
@@ -54,21 +53,20 @@ class FormProcessor {
      * @return void
      */
     private function __construct() {
-        // TODO : demander la page en paramètre pour les messages d'alertes
 
-        //* Dépendance
+        // Dépendance
         $this->globalVars = GlobalVarsManager::instance();
         $this->dataBase   = DataBase::connect();
     }
 
     /**
      * process
-     *
      * Instancie FormProcessor.
      *
      * @return FormProcessor
      */
     public static function process(): FormProcessor {
+
         // Si Il n'existe pas déjà de connexion
         if (!self::$formProcessorInstance) {
             // On instancie par la méthode __construct
@@ -80,7 +78,6 @@ class FormProcessor {
 
     /**
      * newTask
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      *
      * @param  array $ponderatorsDatas
@@ -89,6 +86,7 @@ class FormProcessor {
      */
     // TODO on a juste besoin de la liste des IDs des pondérateurs
     public function newTask(array $ponderatorsDatas) {
+
         // On vérifie si le formulaire à été validé
         if (filter_has_var(INPUT_POST, TodoListPage::NAME_TASK_CONTENT_INPUT) === false) {
 
@@ -102,6 +100,7 @@ class FormProcessor {
         $taskId = DataBase::connect()->addNewTask($_POST["content"]);
 
         if ($taskId === 0) {
+
             // 0 est le code d'erreur lors de l'enregistrment
             TodoListPage::display()->addAlertMessage('Il y a eu un problème d\'enregistrement');
             return;
@@ -124,14 +123,29 @@ class FormProcessor {
     }
 
     /**
-     * deleteTask
+     * newPond
      *
+     * @return void
+     */
+    public function newPond(): bool {
+        if ($this->globalVars->getnewPondName() === '') {
+            return false;
+        }
+        return $this->dataBase->newPond(
+            $this->globalVars->getnewPondName(),
+            $this->globalVars->getnewPondCoef()
+        );
+    }
+
+    /**
+     * deleteTask
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return void
      */
     public function deleteTask() {
+
         // On vérifie si le formulaire à été validé
         // TODO mettre delete en constante
         if (filter_has_var(INPUT_GET, 'delete') === false) {
@@ -177,8 +191,7 @@ class FormProcessor {
 
     /**
      * deletePonderator
-     *
-     * * FormProcessor::process()->deletePonderator();
+     * FormProcessor::process()->deletePonderator();
      *
      * @return void
      */

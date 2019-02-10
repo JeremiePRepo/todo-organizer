@@ -37,9 +37,6 @@ class DataBase {
     private static $dataBaseInstance = null; // DataBase
     private $connectionPDO; // Object PDO
 
-    //* Dépendences
-    private $page; // AbstractWebPage
-
     /*\
     ----------------------------------------
     Méthodes
@@ -67,9 +64,7 @@ class DataBase {
                 DB_USER,
                 DB_PASS);
         } catch (PDOException $error) {
-            // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
-            TodoListPage::display()->addAlertMessage('Erreur de connexion.');
+            // TODO : Notifier l'erreur dans un registre
         }
     }
 
@@ -300,45 +295,47 @@ class DataBase {
      */
     public function addNewTask(string $content): int {
         // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0'); SELECT LAST_INSERT_ID();
-        try {
-            $pdoStatement = $this->connectionPDO->prepare(
-                'INSERT INTO `task` (`content`, `checked`) VALUES (:content, 0)');
-        } catch (PDOException $error) {
+        $sql    = 'INSERT INTO ' . DB_TASK_TB . ' (' . DB_TASK_CONTENT . ', ' . DB_TASK_CHECKED . ') VALUES (:content, 0)';
+        $values = array(array(':content', $content, PDO::PARAM_STR));
 
-            // Erreur lors de la préparation
-            echo 'Erreur lors de la préparation';
-            // TODO : Renvoyer un message d'erreur
-            return 0;
-        }
+        $return = self::RET_BOOL;
+        if ($this->doRequest($sql, $values, $return) === false) {
 
-        if ($pdoStatement === false) {
-            // Erreur
-            echo 'Erreur pdoStatement';
-            // TODO : Renvoyer un message d'erreur
-            return 0;
-        }
-
-        if (($pdoStatement->bindValue(':content', $content, PDO::PARAM_STR)) === false) {
-            // Erreur pendant le bindValue
-            echo 'Erreur bindValue<br>';
-            // TODO : Renvoyer un message d'erreur
-            return 0;
-        }
-
-        if ($pdoStatement->execute() === false) {
-            // Erreur d'exécution
-            echo 'Erreur d\'exécution';
-            echo $pdoStatement->errorInfo()[2];
-            // TODO : Renvoyer un message d'erreur
+            // Il y a eu un problème
+            // TODO : Enregistrer l'erreur dans un registre
             return 0;
         }
 
         // Ici La requete s'est bien effectuée
-
-        // TODO : Alerter du succès de l'opération
-
-        // On récupère l'ID de la dernière ligne insérée
+        // On envoie l'ID de la dernière ligne insérée
         return intval($this->connectionPDO->lastInsertId());
+    }
+
+    /**
+     * newPond
+     *
+     * @param  string $name
+     * @param  int $coef
+     *
+     * @return bool
+     */
+    public function newPond(string $name, int $coef): bool {
+        // INSERT INTO `ponderator` (`name`, `coefficient`) VALUES ('test', '1');
+        $sql    = 'INSERT INTO ' . DB_POND_TB . ' (' . DB_POND_NAME . ', ' . DB_POND_COEF . ') VALUES (:pond_name, :pond_coef)';
+        $values = array(
+            array(':pond_name', $name, PDO::PARAM_STR),
+            array(':pond_coef', $coef, PDO::PARAM_INT));
+
+        $return = self::RET_BOOL;
+        if ($this->doRequest($sql, $values, $return) === false) {
+
+            // Il y a eu un problème
+            // TODO : Enregistrer l'erreur dans un registre
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
     }
 
     /**

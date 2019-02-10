@@ -28,13 +28,14 @@ class PonderatorsListPage extends AbstractWebPage {
 
     private static $PageInstance = null; // PonderatorsListPage
 
-    //* Dépendences
+    // Dépendences
     private $dataBase; // DataBase
     private $formProcessor; // DataBase
 
     // Messages
     const DEL_SUCC = 'Pondérateur supprimé.';
     const DEL_ERR  = 'Problème lors de la suppression.';
+    const NEW_POND = 'Nouveau pondérateur ajouté.';
 
     /*\
     ----------------------------------------
@@ -45,14 +46,13 @@ class PonderatorsListPage extends AbstractWebPage {
     /**
      * __construct
      * En private car singleton.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @return void
      */
     private function __construct() {
 
-        //* Dépendances
+        // Dépendances
         $this->dataBase      = DataBase::connect();
         $this->formProcessor = FormProcessor::process();
 
@@ -71,6 +71,11 @@ class PonderatorsListPage extends AbstractWebPage {
             break;
         }
         // retours = 0, pas de traitement
+
+        // Formulaire d'ajour de pondérateur
+        if ($this->formProcessor->newPond() === true) {
+            $this->addAlertMessage(self::NEW_POND);
+        }
     }
 
     /**
@@ -98,7 +103,7 @@ class PonderatorsListPage extends AbstractWebPage {
 
         $content = '<ul>';
         foreach ($ponderators as $key => $ponderator) {
-            $content .= '<li>' . ($key + 1) . ' - ' . $ponderator["name"] . ' (coefficient ' . $ponderator["coefficient"] . ') <a href="?page=ponderators&delete-pond=' . $ponderator["id"] . '">[X]</a></li>';
+            $content .= '<li>' . ($key + 1) . ' - ' . htmlspecialchars($ponderator["name"]) . ' (coefficient ' . $ponderator["coefficient"] . ') <a href="?page=ponderators&delete-pond=' . $ponderator["id"] . '">[X]</a></li>';
         }
         $content .= '</ul>';
 

@@ -34,6 +34,9 @@ class GlobalVarsManager {
     private $get               = array(
         'page'        => '',
         'delete-pond' => 0); // array
+    private $post = array(
+        'coefficient' => 1,
+        'pond-name'   => ''); // array
 
     //* Dépendences
     private $dataBase; // DataBase
@@ -46,10 +49,8 @@ class GlobalVarsManager {
 
     /**
      * __construct
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
-     *
      * En privé car singleton.
      *
      * @return void
@@ -94,11 +95,25 @@ class GlobalVarsManager {
                 $this->get['delete-pond'] = intval($_GET['delete-pond']);
             }
         }
+
+        // Le formulaire de création de Pondérateur as-t-il été remplis ?
+        if (filter_has_var(INPUT_POST, 'ponderator-name') === true) {
+            $this->post['pond-name'] = $_POST['ponderator-name'];
+            if (filter_has_var(INPUT_POST, 'coefficient') === true) {
+
+                // Le coefficient enteé est-il valide ?
+                // TODO : Passer les chiffres en constantes
+                if ((intval($_POST['coefficient']) > 0) and
+                    (intval($_POST['coefficient']) <= 10)) {
+
+                    $this->post['coefficient'] = intval($_POST['coefficient']);
+                }
+            }
+        }
     }
 
     /**
      * instance
-     *
      * Instancie la classe.
      *
      * @return GlobalVarsManager
@@ -112,8 +127,7 @@ class GlobalVarsManager {
 
     /**
      * getInfoMessage
-     *
-     * * GlobalVarsManager::instance()->getInfoMessage()
+     * GlobalVarsManager::instance()->getInfoMessage()
      *
      * @return void
      */
@@ -123,8 +137,7 @@ class GlobalVarsManager {
 
     /**
      * getUri
-     *
-     * * GlobalVarsManager::instance()->getUri()
+     * GlobalVarsManager::instance()->getUri()
      *
      * @return string
      */
@@ -134,8 +147,7 @@ class GlobalVarsManager {
 
     /**
      * getPage
-     *
-     * * $page = GlobalVarsManager::instance()->getPage();
+     * $page = GlobalVarsManager::instance()->getPage();
      *
      * @return string
      */
@@ -145,12 +157,29 @@ class GlobalVarsManager {
 
     /**
      * getDeletePondId
-     *
-     * * $page = GlobalVarsManager::instance()->getDeletePondId();
+     * $page = GlobalVarsManager::instance()->getDeletePondId();
      *
      * @return int
      */
     public function getDeletePondId(): int {
         return $this->get["delete-pond"];
+    }
+
+    /**
+     * getnewPondName
+     *
+     * @return string
+     */
+    public function getnewPondName(): string {
+        return $this->post["pond-name"];
+    }
+
+    /**
+     * getnewPondCoef
+     *
+     * @return int
+     */
+    public function getnewPondCoef(): int {
+        return $this->post["coefficient"];
     }
 }
