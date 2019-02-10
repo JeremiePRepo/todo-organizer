@@ -20,8 +20,8 @@ FormProcessor::process()->newTask();
 // On utilise le typage strict
 declare (strict_types = 1);
 
-class FormProcessor
-{
+class FormProcessor {
+
     /*\
     ----------------------------------------
     Attributs
@@ -29,6 +29,14 @@ class FormProcessor
     \*/
 
     private static $formProcessorInstance = null; // DataBase
+
+    //* Dépendences
+    private $globalVars; // GlobalVarsManager
+    private $dataBase; // DataBase
+
+    const NULL_CODE = 0;
+    const SUCC_CODE = 1;
+    const ERR_CODE  = 2;
 
     /*\
     ----------------------------------------
@@ -39,13 +47,18 @@ class FormProcessor
     /**
      * __construct
      *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * En privé car singleton.
      *
      * @return void
      */
-    private function __construct()
-    {
-        // TODO : demander la page en paramètre et appeler le bon formulaire
+    private function __construct() {
+        // TODO : demander la page en paramètre pour les messages d'alertes
+
+        //* Dépendance
+        $this->globalVars = GlobalVarsManager::instance();
+        $this->dataBase   = DataBase::connect();
     }
 
     /**
@@ -55,8 +68,7 @@ class FormProcessor
      *
      * @return FormProcessor
      */
-    public static function process(): FormProcessor
-    {
+    public static function process(): FormProcessor {
         // Si Il n'existe pas déjà de connexion
         if (!self::$formProcessorInstance) {
             // On instancie par la méthode __construct
@@ -76,8 +88,7 @@ class FormProcessor
      * @return void
      */
     // TODO on a juste besoin de la liste des IDs des pondérateurs
-    public function newTask(array $ponderatorsDatas)
-    {
+    public function newTask(array $ponderatorsDatas) {
         // On vérifie si le formulaire à été validé
         if (filter_has_var(INPUT_POST, TodoListPage::NAME_TASK_CONTENT_INPUT) === false) {
 
@@ -105,12 +116,9 @@ class FormProcessor
         foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
             if (filter_has_var(INPUT_POST, 'ponderator-' . $key) === true) {
 
-                // Id du pondérateur
-                $ponId = intval($_POST[TodoListPage::NAME_TASK_POND_ENUM . $key]);
-
                 // On insère en BDD la relation trouvée avec le pondérateurs
                 // TODO : Passer database en paramètre
-                DataBase::connect()->newPonderatorRelation($taskId, $ponId);
+                DataBase::connect()->newPonderatorRelation($taskId, $ponderatorDatas["id"]);
             }
         }
     }
@@ -123,8 +131,7 @@ class FormProcessor
      *
      * @return void
      */
-    public function deleteTask()
-    {
+    public function deleteTask() {
         // On vérifie si le formulaire à été validé
         // TODO mettre delete en constante
         if (filter_has_var(INPUT_GET, 'delete') === false) {
@@ -166,5 +173,31 @@ class FormProcessor
         $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
         header("Location: http://$host$uri");
         exit;
+    }
+
+    /**
+     * deletePonderator
+     *
+     * * FormProcessor::process()->deletePonderator();
+     *
+     * @return void
+     */
+    public function deletePonderator(): int {
+        if ($this->globalVars->getDeletePondId() === 0) {
+
+            // Pas de demande de suppression, où paramètre incorrecte
+            return self::NULL_CODE;
+        }
+
+        // On supprime d'abord les relation avec les tâches
+        if ((($this->dataBase->deleteRelationsByPond($this->globalVars->getDeletePondId())) === false) OR
+            (($this->dataBase->deletePonderator($this->globalVars->getDeletePondId())) === false)) {
+
+            // Erreur
+            return self::ERR_CODE;
+        }
+
+        // Tout s'est bien passé
+        return self::SUCC_CODE;
     }
 }

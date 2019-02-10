@@ -22,8 +22,8 @@ DataBase::connect()->checkEmail('email');
 // On utilise le typage strict
 declare (strict_types = 1);
 
-class DataBase
-{
+class DataBase {
+
     /*\
     ----------------------------------------
     Attributs
@@ -31,9 +31,14 @@ class DataBase
     \*/
 
     const PARAMS_FILE = './params.inc.php';
+    const RET_BOOL    = 1;
+    const RET_COLUMN  = 2;
 
     private static $dataBaseInstance = null; // DataBase
     private $connectionPDO; // Object PDO
+
+    //* Dépendences
+    private $page; // AbstractWebPage
 
     /*\
     ----------------------------------------
@@ -43,13 +48,11 @@ class DataBase
 
     /**
      * __construct
-     *
      * En privé car singleton.
      *
      * @return void
      */
-    private function __construct()
-    {
+    private function __construct() {
 
         // On aura besoin de certaines constantes
         include_once self::PARAMS_FILE;
@@ -72,13 +75,11 @@ class DataBase
 
     /**
      * connect
-     *
      * Instancie la DataBase.
      *
      * @return DataBase
      */
-    public static function connect(): DataBase
-    {
+    public static function connect(): DataBase {
         // Si Il n'existe pas déjà de connexion
         if (!self::$dataBaseInstance) {
             // On instancie par la méthode __construct
@@ -90,7 +91,6 @@ class DataBase
 
     /**
      * getTasks
-     *
      * Retourne toutes les tâches enregistrées en DB
      * DataBase::connect()->getTasks();
      *
@@ -119,6 +119,11 @@ class DataBase
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * getPonderators
+     *
+     * @return array
+     */
     public function getPonderators(): array
     {
         // SELECT * FROM `ponderator`
@@ -150,7 +155,6 @@ class DataBase
 
     /**
      * getTaskPonderators
-     *
      * Renvoie la liste des catégories correspondant à un ID de tâche.
      * DataBase::connect()->getTaskPonderators($taskId);
      *
@@ -203,8 +207,7 @@ class DataBase
     }
 
     // TODO factoriser avec ci-dessus
-    public function getPonderatorName(int $ponderatorId): string
-    {
+    public function getPonderatorName(int $ponderatorId): string {
         // SELECT `name` FROM `ponderator` WHERE `id` = 1
         // DB_POND_NAME DB_POND_TB DB_POND_ID
         try {
@@ -244,7 +247,6 @@ class DataBase
 
     /**
      * getPonderatorById
-     *
      * Renvoie le nom du pondérateur et le coefficient en fonction de l'ID
      * DataBase::connect()->getPonderatorById($ponderatorId);
      *
@@ -290,15 +292,13 @@ class DataBase
 
     /**
      * addNewTask
-     *
      * DataBase::connect()->addNewTask('content');
      *
      * @param  string $content
      *
      * @return int
      */
-    public function addNewTask(string $content): int
-    {
+    public function addNewTask(string $content): int {
         // INSERT INTO `task` (`content`, `checked`) VALUES ('contenu', '0'); SELECT LAST_INSERT_ID();
         try {
             $pdoStatement = $this->connectionPDO->prepare(
@@ -349,8 +349,7 @@ class DataBase
      *
      * @return void
      */
-    public function newPonderatorRelation(int $taskId, int $pondId): bool
-    {
+    public function newPonderatorRelation(int $taskId, int $pondId): bool {
         // INSERT INTO `pon_tas_link` (`fk_ponderator`, `fk_task`) VALUES ('2', '8');
         $sql    = 'INSERT INTO ' . LINK_TASK_POND . ' (' . FK_TASK . ', ' . FK_PONDERATOR . ') VALUES (:task_id, :pond_id)';
         $values = array(
@@ -361,11 +360,9 @@ class DataBase
         // 1 = bool
         $return = 1;
         if ($this->doRequest($sql, $values, $return) === false) {
+
             // Il y a eu un problème
-            // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
-            // TODO : Passer le message en constante
-            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            // TODO : Enregistrer l'erreur dans un registre
             return false;
         }
 
@@ -375,15 +372,13 @@ class DataBase
 
     /**
      * deleteRelations
-     *
-     * * DataBase::connect()->deleteRelations($taskId)
+     * DataBase::connect()->deleteRelations($taskId)
      *
      * @param  int $taskId
      *
      * @return bool
      */
-    public function deleteRelations(int $taskId): bool
-    {
+    public function deleteRelations(int $taskId): bool {
         // DELETE FROM `pon_tas_link` WHERE fk_task = 66
         $sql    = 'DELETE FROM ' . LINK_TASK_POND . ' WHERE ' . FK_TASK . ' = :task_id';
         $values = array(array(':task_id', $taskId, PDO::PARAM_INT));
@@ -392,11 +387,36 @@ class DataBase
         // 1 = bool
         $return = 1;
         if ($this->doRequest($sql, $values, $return) === false) {
+
             // Il y a eu un problème
-            // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
-            // TODO : Passer le message en constante
-            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            // TODO : Enregistrer l'erreur dans un registre
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
+     * deleteRelationsByPond
+     * DataBase::connect()->deleteRelationsByPond($pondId)
+     *
+     * @param  int $pondId
+     *
+     * @return bool
+     */
+    public function deleteRelationsByPond(int $pondId): bool {
+        // DELETE FROM `pon_tas_link` WHERE fk_task = 66
+        $sql    = 'DELETE FROM ' . LINK_TASK_POND . ' WHERE ' . FK_PONDERATOR . ' = :pond_id';
+        $values = array(array(':pond_id', $pondId, PDO::PARAM_INT));
+
+        // TODO : créer des constantes pour les types de retours
+        // 1 = bool
+        $return = self::RET_BOOL;
+        if ($this->doRequest($sql, $values, $return) === false) {
+
+            // Il y a eu un problème
+            // TODO : Enregistrer l'erreur dans un registre
             return false;
         }
 
@@ -406,15 +426,13 @@ class DataBase
 
     /**
      * deleteTask
-     *
-     * * DataBase::connect()->deleteTask($taskId)
+     * DataBase::connect()->deleteTask($taskId)
      *
      * @param  int $taskId
      *
      * @return bool
      */
-    public function deleteTask(int $taskId): bool
-    {
+    public function deleteTask(int $taskId): bool {
         $sql    = 'DELETE FROM ' . DB_TASK_TB . ' WHERE ' . DB_TASK_ID . ' = :task_id';
         $values = array(array(':task_id', $taskId, PDO::PARAM_INT));
 
@@ -422,11 +440,61 @@ class DataBase
         // 1 = bool
         $return = 1;
         if ($this->doRequest($sql, $values, $return) === false) {
+
             // Il y a eu un problème
-            // TODO : Passer la page en attribut
-            // TODO : L'erreur n'est pas interceptée ?
-            // TODO : Passer le message en constante
-            TodoListPage::display()->addAlertMessage('Erreur dans l\'enregistrement d\'une relation');
+            // TODO : Enregistrer l'erreur dans un registre
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
+     * deletePonderator
+     * DataBase::connect()->deletePonderator($pondId)
+     *
+     * @param  int $pondId
+     *
+     * @return bool
+     */
+    public function deletePonderator(int $pondId): bool {
+        // DELETE FROM `ponderator` WHERE `ponderator`.`id` = 7
+        $sql    = 'DELETE FROM ' . DB_POND_TB . ' WHERE ' . DB_POND_ID . ' = :pond_id';
+        $values = array(array(':pond_id', $pondId, PDO::PARAM_INT));
+
+        // TODO : créer des constantes pour les types de retours
+        // 1 = bool
+        $return = self::RET_BOOL;
+        if ($this->doRequest($sql, $values, $return) === false) {
+
+            // Il y a eu un problème
+            // TODO : Enregistrer l'erreur dans un registre
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
+     * checkPonderatorExists
+     * DataBase::connect()->checkPonderatorExists($pondId);
+     *
+     * @param  int $pondId
+     *
+     * @return bool
+     */
+    public function checkPonderatorExists(int $pondId): bool {
+
+        // SELECT id FROM ponderator WHERE id = 5
+        $sql    = 'SELECT ' . DB_POND_ID . ' FROM ' . DB_POND_TB . ' WHERE ' . DB_POND_ID . ' = :pond_id';
+        $values = array(array(':pond_id', $pondId, PDO::PARAM_INT));
+        $return = self::RET_COLUMN;
+
+        if (empty($this->doRequest($sql, $values, $return))) {
+
+            // L'id n'existe pas en Base
             return false;
         }
 
@@ -443,8 +511,7 @@ class DataBase
      *
      * @return mixed
      */
-    public function doRequest(string $sql, array $values, int $return)
-    {
+    public function doRequest(string $sql, array $values, int $return) {
         try {
             $pdoStatement = $this->connectionPDO->prepare($sql);
         } catch (PDOException $error) {
@@ -484,11 +551,15 @@ class DataBase
 
         // La requete s'est bien effectuée, on envoie la valeur retour demandée
         switch ($return) {
-            case 1:
-                return true;
 
-            default:
-                return false;
+        case self::RET_BOOL:
+            return true;
+
+        case self::RET_COLUMN:
+            return $pdoStatement->fetchAll(PDO::FETCH_COLUMN);
+
+        default:
+            return false;
         }
     }
 }

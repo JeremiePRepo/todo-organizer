@@ -18,8 +18,7 @@ TodoListPage::display();
 // On utilise le typage strict
 declare (strict_types = 1);
 
-class TodoListPage extends AbstractWebPage
-{
+class TodoListPage extends AbstractWebPage {
     /*\
     ----------------------------------------
     Attributs
@@ -79,8 +78,7 @@ class TodoListPage extends AbstractWebPage
      * En private car singleton.
      * @return void
      */
-    private function __construct()
-    {
+    private function __construct() {
     }
 
     /**
@@ -88,14 +86,13 @@ class TodoListPage extends AbstractWebPage
      *
      * @return TodoListPage
      */
-    public static function display(): TodoListPage
-    {
+    public static function display(): TodoListPage {
+
         // Si Il n'existe pas déjà de connexion
         if (!self::$PageInstance) {
             // On instancie par la méthode __construct
             self::$PageInstance = new TodoListPage();
         }
-
         return self::$PageInstance;
     }
 
@@ -116,8 +113,7 @@ class TodoListPage extends AbstractWebPage
      * @return void
      */
     // TODO factoriser les constantes
-    public function setTodosTable(DataBase $dbConnection, array $todosList)
-    {
+    public function setTodosTable(DataBase $dbConnection, array $todosList) {
         // TODO : récupérer juste les éléments nécessaires (changer la requête SQL)
         // On récupère les ID, les noms et les coefficients de tous les pondérateurs
         $ponderatorsDatas = $dbConnection->getPonderators(); // array
@@ -227,8 +223,7 @@ class TodoListPage extends AbstractWebPage
      */
     // TODO factoriser les constantes
     // TODO Faire un objet Forms
-    public function getNewTaskForm(array $ponderatorsDatas): string
-    {
+    public function getNewTaskForm(array $ponderatorsDatas): string {
 
         // Première partie statique du formulaire
         $form =
@@ -279,6 +274,13 @@ class TodoListPage extends AbstractWebPage
         return $form;
     }
 
+    public function getTitle(): string {
+        return
+        self::H1_OPEN .
+        self::TITLE_PAGE .
+        self::H1_CLOSE . '<h3>Accueil</h3>';
+    }
+
     /**
      * getHtmlContent
      *
@@ -286,13 +288,8 @@ class TodoListPage extends AbstractWebPage
      *
      * @return string
      */
-    public function getHtmlContent(): string
-    {
-        return
-        self::H1_OPEN .
-        self::TITLE_PAGE .
-        self::H1_CLOSE .
-        self::$content;
+    public function getHtmlContent(): string {
+        return self::$content;
     }
 
     /**
@@ -305,8 +302,7 @@ class TodoListPage extends AbstractWebPage
      *
      * @return void
      */
-    public function setContent(string $content)
-    {
+    public function setContent(string $content) {
         self::$content = $content;
     }
 }

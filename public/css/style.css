@@ -1,3 +1,7 @@
+html {
+    font-family: Verdana;
+}
 body {
     max-width: initial;
+    font-size: 1.4rem;
 }
