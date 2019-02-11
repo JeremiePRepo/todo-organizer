@@ -33,7 +33,8 @@ class GlobalVarsManager {
     private $uri               = ''; // string
     private $get               = array(
         'page'        => '',
-        'delete-pond' => 0); // array
+        'delete-pond' => 0,
+        'task-id'     => 0); // array
     private $post = array(
         'coefficient' => 1,
         'pond-name'   => ''); // array
@@ -63,6 +64,7 @@ class GlobalVarsManager {
         // Uri de la page
         $this->uri .= rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
+        // TODO : faire des fonctions
         // Si un message d'info a été envoyé a la page précédente, on l'affiche
         if (isset($_SESSION['alert_message'])) {
             // TODO : vérifier que alert_message soit un string
@@ -74,16 +76,7 @@ class GlobalVarsManager {
 
         // Page demandée
         if (filter_has_var(INPUT_GET, 'page') === true) {
-
-            // On vérifie que la page existe
-            // TODO : si la page n'existe pas, erreur 404
-            foreach (AbstractWebPage::NAV as $page) {
-                if ($_GET['page'] === $page[1]) {
-
-                    // La page en parametre Get existe
-                    $this->get['page'] = $_GET['page'];
-                }
-            }
+            $this->get['page'] = $_GET['page'];
         }
 
         if (filter_has_var(INPUT_GET, 'delete-pond') === true) {
@@ -110,6 +103,9 @@ class GlobalVarsManager {
                 }
             }
         }
+
+        // Id de la page à modifier pour la page EditTaskPage
+        $this->setTaskId();
     }
 
     /**
@@ -123,6 +119,29 @@ class GlobalVarsManager {
             self::$globalVars = new GlobalVarsManager();
         }
         return self::$globalVars;
+    }
+
+    /**
+     * setTaskId
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
+     * @return void
+     */
+    public function setTaskId() {
+
+        // Id de la tâche en cours de modification
+        if (filter_has_var(INPUT_GET, 'task-id') === true) {
+            $this->get['task-id'] = intval($_GET['task-id']);
+        }
+    }
+
+    /**
+     * getTaskId
+     *
+     * @return void
+     */
+    public function getTaskId() {
+        return $this->get['task-id'];
     }
 
     /**

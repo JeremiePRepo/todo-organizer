@@ -30,10 +30,10 @@ class Router {
 
     private static $router = null; // Router
 
-    //* Dépendances
+    // Dépendances
     private $formProcessor; // object FormProcessor
-    private $todolistPage; // object TodolistPage
-    private $ponderatorsListPage; // object PonderatorsListPage
+    private $globalVars; // object GlobalVarsManager
+    private $page; // object AbstractWebPage
     private $dbConnection; // object DataBase
 
     /*\
@@ -44,7 +44,6 @@ class Router {
 
     /**
      * __construct
-     *
      * En privé car singleton.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -53,20 +52,21 @@ class Router {
      */
     private function __construct() {
 
-        //* Dépendances
+        // Dépendances
         $this->dbConnection  = DataBase::connect();
         $this->formProcessor = FormProcessor::process();
+        $this->globalVars    = GlobalVarsManager::instance();
 
         // TODO : mettre en dépendance
-        $page = GlobalVarsManager::instance()->getPage();
+        $page = $this->globalVars->getPage();
 
         switch ($page) {
         case '':
 
             // Page d'accueil
 
-            //* Dépendance
-            $this->todolistPage = TodoListPage::display();
+            // Dépendance
+            $this->page = TodoListPage::display();
 
             // TODO : Mettre tout ce qui suit dans la page
 
@@ -84,25 +84,38 @@ class Router {
             $todoList = new TodoList($this->dbConnection); // object TodoList
 
             // On affiche la page (pour la page todolist), a mettre dans le routeur
-            $this->todolistPage->setTodosTable($this->dbConnection, $todoList->getTodoList());
+            $this->page->setTodosTable($this->dbConnection, $todoList->getTodoList());
             break;
 
         case 'ponderators':
 
             // Page de gestion des pondérateurs
 
-            //* Dépendance
-            $this->ponderatorsListPage = PonderatorsListPage::display();
+            // Dépendance
+            $this->page = PonderatorsListPage::display();
+            break;
+
+        case 'edit-task':
+
+            // Page d'édition de tâche
+
+            // On vérifie que l'id soit valide
+            if (($this->dbConnection->checkTaskExists($this->globalVars->getTaskId())) === true) {
+
+                // Dépendance
+                $this->page = EditTaskPage::display();
+                break;
+            }
 
         default:
+
             // 404 Page
-            break;
+            $this->page = NotFoundPage::display();
         }
     }
 
     /**
      * callPage
-     *
      * Instancie le routeur.
      *
      * @return Router

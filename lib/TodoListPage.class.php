@@ -194,7 +194,8 @@ class TodoListPage extends AbstractWebPage {
             $task->getWeight() .
             self::TB_TD_CLOSE .
             self::TB_TD_OPEN .
-            '<a href="?delete=' . $task->getTaskId() . '">[X]</a>' .
+            '<a href="?delete=' . $task->getTaskId() . '">[X]</a> ' .
+            '<a href="?page=edit-task&task-id=' . $task->getTaskId() . '">modifier</a>' .
             self::TB_TD_CLOSE .
             self::TB_TR_CLOSE;
         }

@@ -500,6 +500,31 @@ class DataBase {
     }
 
     /**
+     * checkTaskExists
+     * DataBase::connect()->checkTaskExists($TaskId);
+     *
+     * @param  int $TaskId
+     *
+     * @return bool
+     */
+    public function checkTaskExists(int $taskId): bool {
+
+        // SELECT id FROM ponderator WHERE id = 5
+        $sql    = 'SELECT ' . DB_TASK_ID . ' FROM ' . DB_TASK_TB . ' WHERE ' . DB_TASK_ID . ' = :task_id';
+        $values = array(array(':task_id', $taskId, PDO::PARAM_INT));
+        $return = self::RET_COLUMN;
+
+        if (empty($this->doRequest($sql, $values, $return))) {
+
+            // L'id n'existe pas en Base
+            return false;
+        }
+
+        // tout c'est bien passé
+        return true;
+    }
+
+    /**
      * doRequest
      *
      * @param  string $sql

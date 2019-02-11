@@ -25,6 +25,11 @@ abstract class AbstractWebPage {
 
     private $alertMessage = ''; // string
 
+    // Dépendences
+    // TODO : enlever pour les classes enfants
+    private $dataBase; // DataBase
+    private $globalVars; // object GlobalVarsManager
+
     // Fichier de paramétrages
     const PARAMS_FILE = './params.inc.php'; // string
 
@@ -50,12 +55,18 @@ abstract class AbstractWebPage {
 
     /**
      * __construct
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * En private car singleton.
      */
     private function __construct() {
         // On aura besoin de certaines constantes
         include_once self::PARAMS_FILE;
+
+        // Dépendances
+        // TODO : enlever pour les classes enfants
+        $this->dataBase   = DataBase::connect();
+        $this->globalVars = GlobalVarsManager::instance();
     }
 
     /**
@@ -128,6 +139,45 @@ abstract class AbstractWebPage {
     }
 
     /**
+     * getTaskForm
+     *
+     * @param  array $ponderatorsDatas
+     *
+     * @return string
+     */
+    public function getTaskForm(int $taskId = 0): string {
+
+        $ponderatorsDatas;
+        $taskName = '';
+        $pondList;
+
+        if ($taskId > 0) {
+            $ponderatorsDatas = $this->dataBase->getPonderators();
+            $pondList         = $this->dataBase->getTaskPonderators($taskId);
+        }
+
+        echo "<pre>";
+        var_dump($pondList);
+        echo "</pre>";
+
+        $form = '
+        <form method="post">
+            <fieldset>
+                <legend>Nouvelle tâche</legend>
+                <label for="content">Tâche</label>
+                <input type="text" required name="content">
+                <label for="ponderators">Catégories</label>';
+        foreach ($ponderatorsDatas as $key => $ponderatorDatas) {
+            $form .= '<div><label for="ponderator-' . $key . '"><input type="checkbox" name="ponderator-' . $key . '" value="' . $ponderatorDatas["id"] . '"> ' . htmlspecialchars($ponderatorDatas["name"]) . '</label></div>';
+        }
+        $form .= '
+                <input type="submit" value="Créer">
+            </fieldset>
+        </form>';
+        return $form;
+    }
+
+    /**
      * addAlertMessage
      *
      * WebPage::display()->addAlertMessage($message);
@@ -164,5 +214,14 @@ abstract class AbstractWebPage {
             $navMenu .= '">' . $link[0] . '</a></li>';
         }
         return $navMenu .= '</ul></nav>';
+    }
+
+    /**
+     * getGlobalVars
+     *
+     * @return GlobalVarsManager
+     */
+    public function getGlobalVars(): GlobalVarsManager {
+        return $this->globalVars;
     }
 }
